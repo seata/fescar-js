@@ -19,7 +19,7 @@ LICENSE = """
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"""
+""".strip()
 
 
 def check_files(files):
@@ -34,7 +34,7 @@ def no_license_file(file):
 if __name__ == '__main__':
     files = check_files([
         './vitest.config.ts',
-        *glob('./packages/**/*.ts', recursive=True)
+        *glob('./packages/**/[!lib]*/*.ts', recursive=True)
     ])
 
     if len(files) > 0:
