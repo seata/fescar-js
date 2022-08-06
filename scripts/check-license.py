@@ -1,3 +1,8 @@
+from glob import glob
+from base import style
+
+
+LICENSE = """
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,12 +19,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+""".strip()
 
-/// <reference types="vitest" />
-import { defineConfig } from 'vite'
 
-export default defineConfig({
-  test: {
-    globals: true
-  }
-})
+def check_files(files):
+    return [file for file in files if no_license_file(file)]
+
+
+def no_license_file(file):
+    with open(file, 'r') as f:
+        return LICENSE not in f.read()
+
+
+if __name__ == '__main__':
+    files = check_files([
+        './vitest.config.ts',
+        *glob('./packages/**/[!lib]*/*.ts', recursive=True)
+    ])
+
+    if len(files) > 0:
+        for file in files:
+            print(f'{style.failed(file)} missing license')
+        exit(1)
