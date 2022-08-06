@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+# check file license
+python scripts/check_license.py
+
+# prettier
 npx pretty-quick --staged
+
+# unit test
 npm test
