@@ -14,3 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import { AbstractIdentifyRequest } from './abstract-identify-request'
+import { MessageType } from './message-type'
+
+interface RMRequestOptions {
+  applicationId: string
+  transactionServiceGroup: string
+}
+
+export class RegisterRMRequest extends AbstractIdentifyRequest {
+  constructor(
+    prop: RMRequestOptions = {
+      applicationId: '',
+      transactionServiceGroup: ''
+    }
+  ) {
+    super(prop.applicationId, prop.transactionServiceGroup)
+  }
+
+  private resourceIds: string = ''
+
+  getResourceIds() {
+    return this.resourceIds
+  }
+
+  setResourceIds(resourceIds: string) {
+    this.resourceIds = resourceIds
+    return this
+  }
+
+  getTypeCode() {
+    return MessageType.TYPE_REG_RM
+  }
+}
