@@ -14,3 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import hessian from 'hessian.js'
+import { Serializer } from './serializer'
+
+export class HessianSerializer<T> implements Serializer<T> {
+  serialize(obj: any): Buffer {
+    return hessian.encode(obj)
+  }
+
+  deserialize(buf: Buffer): T {
+    return hessian.decode(buf)
+  }
+}
