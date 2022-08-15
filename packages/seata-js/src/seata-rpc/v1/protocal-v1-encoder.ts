@@ -15,4 +15,28 @@
  * limitations under the License.
  */
 
-export class ProtocolV1Encoder {}
+
+/**
+ * <pre>
+ * 0     1     2     3     4     5     6     7     8     9    10     11    12    13    14    15    16
+ * +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
+ * |   magic   |Proto|     Full length       |    Head   | Msg |Seria|Compr|     RequestId         |
+ * |   code    |colVer|    (head+body)      |   Length  |Type |lizer|ess  |                       |
+ * +-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------+
+ * |                                                                                               |
+ * |                                   Head Map [Optional]                                         |
+ * +-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------+
+ * |                                                                                               |
+ * |                                         body                                                  |
+ * |                                                                                               |
+ * |                                        ... ...                                                |
+ * +-----------------------------------------------------------------------------------------------+
+ * </pre>
+ * <p>
+ * <li>Full Length: include all data </li>
+ * <li>Head Length: include head data from magic code to head map. </li>
+ * <li>Body Length: Full Length - Head Length</li>
+ * </p>
+ * https://github.com/seata/seata/issues/893
+ */
+export class ProtocolV1Encoder { }
