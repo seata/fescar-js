@@ -15,4 +15,6 @@
  * limitations under the License.
  */
 
-export class HeadMapSerializer {}
+export class SeataHeartBeat {
+
+}
