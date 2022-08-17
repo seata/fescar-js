@@ -39,4 +39,5 @@
  * </p>
  * https://github.com/seata/seata/issues/893
  */
+
 export class ProtocolV1Encoder { }
