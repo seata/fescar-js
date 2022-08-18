@@ -19,7 +19,6 @@
  * Status of global transaction.
  */
 export enum GlobalStatus {
-
   /**
    * Un known global status.
    */

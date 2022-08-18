@@ -39,4 +39,4 @@
  * https://github.com/seata/seata/issues/893
  */
 
-export class ProtocolV1Decoder { }
+export class ProtocolV1Decoder {}

@@ -15,4 +15,4 @@
  * limitations under the License.
  */
 
-export class SeataTcpTransport { }
+export class SeataTcpTransport {}

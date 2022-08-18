@@ -14,5 +14,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Buffer } from 'node:buffer'
 
-export class SeataCluster {}
+export interface Compressor {
+  /**
+   * compress byte[] to byte[].
+   * @param bytes the bytes
+   * @return the byte[]
+   */
+  compress(bytes: Buffer): Buffer
+
+  /**
+   * decompress byte[] to byte[].
+   * @param bytes the bytes
+   * @return the byte[]
+   */
+  decompress(bytes: Buffer): Buffer
+}
+
+export enum CompressorType {
+  /**
+   * Not compress
+   */
+  NONE = 0,
+
+  /**
+   * The gzip.
+   */
+  GZIP = 1,
+
+  /**
+   * The zip.
+   */
+  ZIP = 2,
+
+  /**
+   * The sevenz.
+   */
+  SEVENZ = 3,
+
+  /**
+   * The bzip2.
+   */
+  BZIP2 = 4,
+
+  /**
+   * The lz4.
+   */
+  LZ4 = 5,
+
+  /**
+   * The deflater.
+   */
+  DEFLATER = 6,
+
+  /**
+   * The zstd.
+   */
+  ZSTD = 7
+}

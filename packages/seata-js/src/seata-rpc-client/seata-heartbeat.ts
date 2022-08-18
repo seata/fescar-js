@@ -15,6 +15,4 @@
  * limitations under the License.
  */
 
-export class SeataHeartBeat {
-
-}
+export class SeataHeartBeat {}

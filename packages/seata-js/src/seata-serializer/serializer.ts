@@ -28,3 +28,40 @@ export interface Serializer<T> {
    */
   deserialize(buf: Buffer): T
 }
+
+export enum SerializerType {
+  /**
+   * The seata.
+   * <p>
+   * Math.pow=2, 0
+   */
+  SEATA = 0x1,
+
+  /**
+   * The protobuf, 'io.seata:seata-serializer-protobuf' dependency must be referenced manually.
+   * <p>
+   * Math.pow=2, 1
+   */
+  PROTOBUF = 0x2,
+
+  /**
+   * The kryo.
+   * <p>
+   * Math.pow=2, 2
+   */
+  KRYO = 0x4,
+
+  /**
+   * The fst.
+   * <p>
+   * Math.pow=2, 3
+   */
+  FST = 0x8,
+
+  /**
+   * The hessian.
+   * <p>
+   * Math.pow=2, 4
+   */
+  HESSIAN = 0x16
+}

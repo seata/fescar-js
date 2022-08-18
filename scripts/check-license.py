@@ -46,13 +46,26 @@ def no_license_file(file):
         return LICENSE not in f.read()
 
 
+def fixed_license_file(file):
+    with open(file, 'r+') as f:
+        raw = f.read()
+        f.seek(0)
+        f.write(LICENSE + '\n' + raw)
+
+
 if __name__ == '__main__':
     files = check_files([
         './vitest.config.ts',
         *glob('./packages/**/[!lib]*/*.ts', recursive=True)
     ])
 
-    if len(files) > 0:
+    import sys
+    is_fixed = len(sys.argv) > 1 and sys.argv[1] == "--fixed"
+    if not is_fixed:
+        if len(files) > 0:
+            for file in files:
+                print(f'{style.failed(file)} missing license')
+            exit(1)
+    else:
         for file in files:
-            print(f'{style.failed(file)} missing license')
-        exit(1)
+            fixed_license_file(file)

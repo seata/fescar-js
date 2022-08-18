@@ -15,4 +15,14 @@
  * limitations under the License.
  */
 
-export class SeataCluster {}
+import { Compressor } from './compressor'
+
+export class NoneCompressor implements Compressor {
+  compress(bytes: Buffer): Buffer {
+    return bytes
+  }
+
+  decompress(bytes: Buffer): Buffer {
+    return bytes
+  }
+}
