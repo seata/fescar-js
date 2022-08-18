@@ -16,28 +16,38 @@
  */
 
 import { BranchType } from './branch-type'
+import { Resource } from './resouce'
+import { ResourceManagerInbound } from './resource-manager-inbound'
+import { ResourceManagerOutbound } from './resource-manager-outbound'
 
-export interface Resouce {
+export interface ResourceManager
+  extends ResourceManagerInbound,
+    ResourceManagerOutbound {
   /**
-   * Get the resource group id.
-   * e.g. master and slave data-source should be with the same resource group id.
+   * Register a Resource to be managed by Resource Manager.
    *
-   * @return resource group id.
+   * @param resource The resource to be managed.
    */
-  getResourceGroupId(): string
-
-  /**
-   * Get the resource id.
-   * e.g. url of a data-source could be the id of the db data-source resource.
-   *
-   * @return resource id.
-   */
-  getResourceId(): string
+  registerResource(resource: Resource): Promise<void>
 
   /**
-   * get resource type, AT, TCC, SAGA and XA
+   * Unregister a Resource from the Resource Manager.
    *
-   * @return branch type
+   * @param resource The resource to be removed.
    */
-  getBranchType(): BranchType
+  unregisterResource(resource: Resource): Promise<void>
+
+  /**
+   * Get all resources managed by this manager.
+   *
+   * @return resourceId -- Resource Map
+   */
+  getManagedResources(): Promise<Map<String, Resource>>
+
+  /**
+   * Get the BranchType.
+   *
+   * @return The BranchType of ResourceManager.
+   */
+  getBranchType(): Promise<BranchType>
 }

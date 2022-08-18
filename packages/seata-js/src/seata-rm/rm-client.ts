@@ -15,4 +15,14 @@
  * limitations under the License.
  */
 
-export class SeataCluster {}
+class RMClient {
+  /**
+   * Init.
+   *
+   * @param applicationId           the application id
+   * @param transactionServiceGroup the transaction service group
+   */
+  static init(applicationId: string, transactionServiceGroup: string) {
+    console.log(applicationId, transactionServiceGroup)
+  }
+}

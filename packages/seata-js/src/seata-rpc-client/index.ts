@@ -15,4 +15,4 @@
  * limitations under the License.
  */
 
-export class SeataRpcClient { }
+export class SeataRpcClient {}

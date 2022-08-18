@@ -15,4 +15,4 @@
  * limitations under the License.
  */
 
-export class ProtocolV1DecodeBuffer { }
+export class ProtocolV1DecodeBuffer {}

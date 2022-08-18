@@ -1,3 +1,8 @@
+import { CompressorType } from './compressor'
+import { Bzip2Compressor } from './compressor-bzip2'
+import { DeflaterCompressor } from './compressor-deflater'
+import { GzipCompressor } from './compressor-gzip'
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -14,5 +19,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-export class SeataCluster {}
+export class CompressorFactory {
+  private static compressorMap = {
+    [CompressorType[CompressorType.BZIP2]!]: new Bzip2Compressor(),
+    [CompressorType[CompressorType.DEFLATER]!]: new DeflaterCompressor(),
+    [CompressorType[CompressorType.GZIP]!]: new GzipCompressor()
+  }
+}

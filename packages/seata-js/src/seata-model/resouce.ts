@@ -15,15 +15,29 @@
  * limitations under the License.
  */
 
-import hessian from 'hessian.js'
-import { Serializer } from './serializer'
+import { BranchType } from './branch-type'
 
-export class HessianSerializer<T> implements Serializer<T> {
-  serialize(obj: any): Buffer {
-    return hessian.encode(obj)
-  }
+export interface Resource {
+  /**
+   * Get the resource group id.
+   * e.g. master and slave data-source should be with the same resource group id.
+   *
+   * @return resource group id.
+   */
+  getResourceGroupId(): string
 
-  deserialize(buf: Buffer): T {
-    return hessian.decode(buf)
-  }
+  /**
+   * Get the resource id.
+   * e.g. url of a data-source could be the id of the db data-source resource.
+   *
+   * @return resource id.
+   */
+  getResourceId(): string
+
+  /**
+   * get resource type, AT, TCC, SAGA and XA
+   *
+   * @return branch type
+   */
+  getBranchType(): BranchType
 }

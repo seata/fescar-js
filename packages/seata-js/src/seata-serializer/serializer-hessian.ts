@@ -15,4 +15,15 @@
  * limitations under the License.
  */
 
-export class SeataCluster {}
+import hessian from 'hessian.js'
+import { Serializer } from './serializer'
+
+export class FstSerializer<T> implements Serializer<T> {
+  serialize(obj: any): Buffer {
+    return hessian.encode(obj)
+  }
+
+  deserialize(buf: Buffer): T {
+    return hessian.decode(buf)
+  }
+}

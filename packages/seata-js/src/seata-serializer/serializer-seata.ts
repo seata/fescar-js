@@ -14,3 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import { Serializer } from './serializer'
+
+export class SeataSerializer<T> implements Serializer<T> {
+  serialize(obj: any): Buffer {
+    return Buffer.alloc(10)
+  }
+
+  deserialize(buf: Buffer): T {
+    return {} as T
+  }
+}

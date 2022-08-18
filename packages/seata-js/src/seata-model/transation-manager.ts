@@ -15,19 +15,24 @@
  * limitations under the License.
  */
 
-import { GlobalStatus } from "./global-status"
+import { GlobalStatus } from './global-status'
 
 export default interface TransactionManager {
   /**
-     * Begin a new global transaction.
-     *
-     * @param applicationId           ID of the application who begins this transaction.
-     * @param transactionServiceGroup ID of the transaction service group.
-     * @param name                    Give a name to the global transaction.
-     * @param timeout                 Timeout of the global transaction.
-     * @return XID of the global transaction 
-     */
-  begin(applicationId: string, transactionServiceGroup: string, name: string, timeout: number): string
+   * Begin a new global transaction.
+   *
+   * @param applicationId           ID of the application who begins this transaction.
+   * @param transactionServiceGroup ID of the transaction service group.
+   * @param name                    Give a name to the global transaction.
+   * @param timeout                 Timeout of the global transaction.
+   * @return XID of the global transaction
+   */
+  begin(
+    applicationId: string,
+    transactionServiceGroup: string,
+    name: string,
+    timeout: number
+  ): string
 
   /**
    * Global commit.
