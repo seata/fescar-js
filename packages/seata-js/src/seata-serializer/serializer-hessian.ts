@@ -20,7 +20,8 @@ import { Serializer } from './serializer'
 
 export class FstSerializer<T> implements Serializer<T> {
   serialize(obj: any): Buffer {
-    return hessian.encode(obj)
+    const encoder = hessian.encode(obj)
+    return encoder.byteBuffer._bytes.slice(0, encoder.byteBuffer._offset)
   }
 
   deserialize(buf: Buffer): T {

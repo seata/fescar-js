@@ -19,6 +19,7 @@ import { Buffer } from 'node:buffer'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
 import prot from '../../seata-protocol/protocol-constants'
 import SerializerFactory from '../../seata-serializer'
+import { CompressorFactory } from '../../seata-compressor'
 
 /**
  * <pre>
@@ -51,18 +52,19 @@ export class ProtocolV1Encoder {
       throw new Error(`Not support this class:` + msg)
     }
 
+    let fullLength = prot.V1_HEAD_LENGTH
+    let headLength = prot.V1_HEAD_LENGTH
     const msgType = msg.getMessageType()
-
     let offset = 0
-    const buf = Buffer.alloc(1023)
+
+    // alloc head length
+    let buf = Buffer.alloc(headLength)
     // write magic code
     offset += buf.writeUInt16BE(prot.MAGIC_CODE_S, offset)
     // write version
     offset += buf.writeInt8(prot.VERSION, offset)
-    // full length
-    // header length
-    offset += buf.writeInt16BE(prot.V1_HEAD_LENGTH, offset)
-    offset += buf.writeInt8(msgType, offset)
+    // skip fulllength and headlength, will fix in the end
+    offset += buf.writeInt8(msgType, offset + 6)
     // serializer
     offset += buf.writeInt8(msg.getCodec(), offset)
     // compress
@@ -73,19 +75,30 @@ export class ProtocolV1Encoder {
     // optional map
     const headMap = msg.getHeadMap()
     if (headMap != null && headMap.size > 0) {
-      // write
+      const serializer = SerializerFactory.getSerializer(msg.getCodec())
+      let headBuf = serializer.serialize(headMap)
+      buf = Buffer.concat([buf, headBuf])
+      headLength += headBuf.length
+      fullLength += headBuf.length
     }
 
     // body exclude heartbeat request and response
+    // heartbeat no body
     if (
       msgType != prot.MSGTYPE_HEARTBEAT_REQUEST &&
       msgType != prot.MSGTYPE_HEARTBEAT_RESPONSE
     ) {
       // serialize body
-      const serializer = SerializerFactory[msg.getCodec()]
-      const bytes = serializer?.serialize(msg.getBody())
-      // Compressor compressor = CompressorFactory.getCompressor(rpcMessage.getCompressor());
-      // bodyBytes = compressor.compress(bodyBytes);
+      const serializer = SerializerFactory.getSerializer(msg.getCodec())
+      let bodyBuf = serializer.serialize(msg.getBody())
+      const compressor = CompressorFactory.getCompressor(msg.getCompressor())
+      bodyBuf = compressor.compress(bodyBuf)
+      fullLength += bodyBuf.length
+      buf = Buffer.concat([buf, bodyBuf])
     }
+
+    offset = buf.writeInt32BE(fullLength, 3)
+    buf.writeInt16BE(headLength, offset)
+    return buf
   }
 }

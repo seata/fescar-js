@@ -19,10 +19,19 @@ import { GzipCompressor } from './compressor-gzip'
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 export class CompressorFactory {
   private static compressorMap = {
     [CompressorType[CompressorType.BZIP2]!]: new Bzip2Compressor(),
     [CompressorType[CompressorType.DEFLATER]!]: new DeflaterCompressor(),
     [CompressorType[CompressorType.GZIP]!]: new GzipCompressor()
+  }
+
+  static getCompressor(t: CompressorType) {
+    const compressor = CompressorFactory.compressorMap[t]
+    if (compressor === undefined) {
+      throw new Error(`Could not find compressor with ${t}`)
+    }
+    return compressor
   }
 }
