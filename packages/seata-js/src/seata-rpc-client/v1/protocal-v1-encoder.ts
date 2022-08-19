@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { Buffer } from 'node:buffer'
+import ByteBuffer from './byte-buffer'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
 import prot from '../../seata-protocol/protocol-constants'
 import SerializerFactory from '../../seata-serializer'
@@ -45,60 +45,46 @@ import { CompressorFactory } from '../../seata-compressor'
  * https://github.com/seata/seata/issues/893
  */
 
+import { debuglog } from 'util'
+
+const log = debuglog(`prot:v1:encoder`)
 export class ProtocolV1Encoder {
   encode(msg: RpcMessage) {
+    log(`encode rpc message %j`, msg)
     // check msg type
     if (!(msg instanceof RpcMessage)) {
       throw new Error(`Not support this class:` + msg)
     }
 
-    let fullLength = prot.V1_HEAD_LENGTH
-    let headLength = prot.V1_HEAD_LENGTH
-    const msgType = msg.getMessageType()
-    let offset = 0
-
-    // alloc head length
-    let buf = Buffer.alloc(headLength)
-    // write magic code
-    offset += buf.writeUInt16BE(prot.MAGIC_CODE_S, offset)
-    // write version
-    offset += buf.writeInt8(prot.VERSION, offset)
-    // skip fulllength and headlength, will fix in the end
-    offset += buf.writeInt8(msgType, offset + 6)
-    // serializer
-    offset += buf.writeInt8(msg.getCodec(), offset)
-    // compress
-    offset += buf.writeInt8(msg.getCompressor(), offset)
-    // request id
-    offset += buf.writeUInt32BE(msg.getId(), offset)
+    const buff = new ByteBuffer()
+      .addShort(prot.MAGIC_CODE_S)
+      .addByte(prot.VERSION)
+      // place hold full length,it will fix in the end
+      .addInt(0)
+      // place hold head length,it will fix in the end
+      .addShort(0)
+      .addByte(msg.getMessageType())
+      .addByte(msg.getCodec())
+      .addByte(msg.getCompressor())
+      .addInt(msg.getId())
 
     // optional map
     const headMap = msg.getHeadMap()
     if (headMap != null && headMap.size > 0) {
-      const serializer = SerializerFactory.getSerializer(msg.getCodec())
-      let headBuf = serializer.serialize(headMap)
-      buf = Buffer.concat([buf, headBuf])
-      headLength += headBuf.length
-      fullLength += headBuf.length
+      // todo
     }
 
     // body exclude heartbeat request and response
     // heartbeat no body
-    if (
-      msgType != prot.MSGTYPE_HEARTBEAT_REQUEST &&
-      msgType != prot.MSGTYPE_HEARTBEAT_RESPONSE
-    ) {
+    if (!msg.isHeartBeat()) {
       // serialize body
       const serializer = SerializerFactory.getSerializer(msg.getCodec())
-      let bodyBuf = serializer.serialize(msg.getBody())
+      let body = serializer.serialize(msg.getBody())
       const compressor = CompressorFactory.getCompressor(msg.getCompressor())
-      bodyBuf = compressor.compress(bodyBuf)
-      fullLength += bodyBuf.length
-      buf = Buffer.concat([buf, bodyBuf])
+      body = compressor.compress(body)
+      buff.addBytes(body)
     }
 
-    offset = buf.writeInt32BE(fullLength, 3)
-    buf.writeInt16BE(headLength, offset)
-    return buf
+    return buff.buffer()
   }
 }

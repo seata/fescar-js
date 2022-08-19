@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+import prot from './protocol-constants'
+
 export class RpcMessage {
   private id: number
   private messageType: number
@@ -79,5 +81,12 @@ export class RpcMessage {
 
   setBody(body: Object) {
     this.body = body
+  }
+
+  isHeartBeat() {
+    return (
+      this.messageType === prot.MSGTYPE_HEARTBEAT_REQUEST ||
+      this.messageType === prot.MSGTYPE_HEARTBEAT_RESPONSE
+    )
   }
 }
