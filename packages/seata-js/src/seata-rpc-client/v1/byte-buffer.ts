@@ -15,16 +15,30 @@
  * limitations under the License.
  */
 
-import hessian from 'hessian.js'
-import { Serializer } from './serializer'
+import { Buffer } from 'node:buffer'
 
-export class FstSerializer<T> implements Serializer<T> {
-  serialize(obj: any): Buffer {
-    const encoder = hessian.encode(obj)
-    return encoder.byteBuffer._bytes.slice(0, encoder.byteBuffer._offset)
+const DEFAULT_ALLOC_SIZE = 1024
+
+class ByteBuffer {
+  private offset: number
+  private size: number
+  private buff: Buffer
+
+  constructor() {
+    this.offset = 0
+    this.size = DEFAULT_ALLOC_SIZE
+    this.buff = Buffer.alloc(this.size)
   }
 
-  deserialize(buf: Buffer): T {
-    return hessian.decode(buf)
+
+
+  writeByte(v: number, offset?: number ) {
+    if (offset === undefined) {
+
+    }
+  }
+
+  get capacity() {
+    return this.size - this.offset
   }
 }
