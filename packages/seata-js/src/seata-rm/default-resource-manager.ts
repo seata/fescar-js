@@ -42,7 +42,7 @@ export class DefaultResourceManager implements ResourceManager {
     xid: string,
     branchId: number,
     resourceId: string,
-    applicationData: string
+    applicationData: string,
   ): Promise<BranchStatus> {
     throw new Error('Method not implemented.')
   }
@@ -52,7 +52,7 @@ export class DefaultResourceManager implements ResourceManager {
     xid: string,
     branchId: number,
     resourceId: string,
-    applicationData: string
+    applicationData: string,
   ): Promise<BranchStatus> {
     throw new Error('Method not implemented.')
   }
@@ -63,7 +63,7 @@ export class DefaultResourceManager implements ResourceManager {
     clientId: string,
     xid: string,
     applicationData: string,
-    lockKeys: string
+    lockKeys: string,
   ): Promise<number> {
     throw new Error('Method not implemented.')
   }
@@ -73,7 +73,7 @@ export class DefaultResourceManager implements ResourceManager {
     xid: string,
     branchId: number,
     status: BranchStatus,
-    applicationData: string
+    applicationData: string,
   ): Promise<void> {
     throw new Error('Method not implemented.')
   }
@@ -82,7 +82,7 @@ export class DefaultResourceManager implements ResourceManager {
     branchType: BranchType,
     resourceId: string,
     xid: string,
-    lockKeys: string
+    lockKeys: string,
   ): Promise<boolean> {
     throw new Error('Method not implemented.')
   }

@@ -1,8 +1,3 @@
-import { CompressorType } from './compressor'
-import { Bzip2Compressor } from './compressor-bzip2'
-import { DeflaterCompressor } from './compressor-deflater'
-import { GzipCompressor } from './compressor-gzip'
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -20,15 +15,30 @@ import { GzipCompressor } from './compressor-gzip'
  * limitations under the License.
  */
 
+import { CompressorType } from './compressor'
+import { Bzip2Compressor } from './compressor-bzip2'
+import { DeflaterCompressor } from './compressor-deflater'
+import { GzipCompressor } from './compressor-gzip'
+import { Lz4Compressor } from './compressor-lz4'
+import { NoneCompressor } from './compressor-none'
+import { SevenzCompressor } from './compressor-sevenz'
+import { ZipCompressor } from './compressor-zip'
+import { ZstdCompressor } from './compressor-zstd'
+
 export class CompressorFactory {
-  private static compressorMap = {
-    [CompressorType[CompressorType.BZIP2]!]: new Bzip2Compressor(),
-    [CompressorType[CompressorType.DEFLATER]!]: new DeflaterCompressor(),
-    [CompressorType[CompressorType.GZIP]!]: new GzipCompressor()
+  private static compressorMapping = {
+    [CompressorType.BZIP2]: new Bzip2Compressor(),
+    [CompressorType.DEFLATER]: new DeflaterCompressor(),
+    [CompressorType.GZIP]: new GzipCompressor(),
+    [CompressorType.LZ4]: new Lz4Compressor(),
+    [CompressorType.NONE]: new NoneCompressor(),
+    [CompressorType.SEVENZ]: new SevenzCompressor(),
+    [CompressorType.ZIP]: new ZipCompressor(),
+    [CompressorType.ZSTD]: new ZstdCompressor(),
   }
 
   static getCompressor(t: CompressorType) {
-    const compressor = CompressorFactory.compressorMap[t]
+    const compressor = CompressorFactory.compressorMapping[t]
     if (compressor === undefined) {
       throw new Error(`Could not find compressor with ${t}`)
     }

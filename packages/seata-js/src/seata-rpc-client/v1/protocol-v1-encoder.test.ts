@@ -15,15 +15,26 @@
  * limitations under the License.
  */
 
-import hessian from 'hessian.js'
-import { Serializer } from './serializer'
+import { CompressorType } from '../../seata-compressor/compressor'
+import { SerializerType } from '../../seata-serializer/serializer'
+import { RpcMessage } from '../../seata-protocol/rpc-message'
+import { ProtocolV1Encoder } from './protocol-v1-encoder'
 
-export class HessianSerializer implements Serializer {
-  serialize<T = any>(obj: T): Buffer {
-    return hessian.encode(obj, '2.0')
-  }
-
-  deserialize<T = any>(buf: Buffer): T {
-    return hessian.decode(buf, '2.0')
-  }
-}
+describe(`test protocol v1 encoder`, () => {
+  it(`test encode rpc message`, () => {
+    const msg = new RpcMessage()
+      .setId(12345)
+      .setMessageType(1)
+      .setCodec(SerializerType.HESSIAN)
+      .setCompressor(CompressorType.NONE)
+      .setHeadMap(
+        new Map([
+          ['key1', 'value1'],
+          ['key2', 'value2'],
+        ]),
+      )
+      .setBody({ body: 'body' })
+    const buffer = ProtocolV1Encoder.encode(msg)
+    expect(buffer).toBeTruthy()
+  })
+})

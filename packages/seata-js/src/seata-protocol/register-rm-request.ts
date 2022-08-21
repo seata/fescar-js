@@ -27,8 +27,8 @@ export class RegisterRMRequest extends AbstractIdentifyRequest {
   constructor(
     prop: RMRequestOptions = {
       applicationId: '',
-      transactionServiceGroup: ''
-    }
+      transactionServiceGroup: '',
+    },
   ) {
     super(prop.applicationId, prop.transactionServiceGroup)
   }

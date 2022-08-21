@@ -159,5 +159,5 @@ export enum MessageType {
   /**
    * the constant TYPE_BATCH_RESULT_MSG
    */
-  TYPE_BATCH_RESULT_MSG = 121
+  TYPE_BATCH_RESULT_MSG = 121,
 }

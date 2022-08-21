@@ -15,4 +15,62 @@
  * limitations under the License.
  */
 
-export class HeadMapSerializer {}
+import { isEmptyMap, isNil } from '../../seata-common'
+import ByteBuffer from './byte-buffer'
+
+export class HeadMapSerializer {
+  private static writeString(out: ByteBuffer, str: string) {
+    if (str == null) {
+      out.writeShort(-1)
+    } else if (str.length === 0) {
+      out.writeShort(0)
+    } else {
+      const bs = Buffer.from(str, 'utf8')
+      out.writeShort(bs.length)
+      out.writeBytes(bs)
+    }
+  }
+
+  private static readString(buf: ByteBuffer) {
+    const len = buf.readShort()
+    if (len <= 0) {
+      return ''
+    } else {
+      return buf.readBytes({ len }).toString('utf8')
+    }
+  }
+
+  static encode(map: Map<string, string>, buff: ByteBuffer) {
+    // check map
+    if (isEmptyMap(map)) {
+      return 0
+    }
+
+    const start = buff.getOffset()
+    for (let [k, v] of map) {
+      if (!isNil(k)) {
+        HeadMapSerializer.writeString(buff, k)
+        HeadMapSerializer.writeString(buff, v)
+      }
+    }
+    return buff.getOffset() - start
+  }
+
+  static decode(buff: ByteBuffer, len: number): Map<string, string> {
+    const map = new Map<string, string>()
+    if (isNil(buff) || buff.isEnd() || len <= 0) {
+      return map
+    }
+    const start = buff.getOffset()
+
+    while (buff.getOffset() - start < len) {
+      const k = HeadMapSerializer.readString(buff)
+      const v = HeadMapSerializer.readString(buff)
+      if (!isNil(k)) {
+        map.set(k, v)
+      }
+    }
+
+    return map
+  }
+}

@@ -45,8 +45,8 @@ describe('test register rm request test suites', () => {
         applicationId: 'app',
         transactionServiceGroup: 'group',
         extraData: 'extra',
-        resourceIds: 'r1,r2'
-      })
+        resourceIds: 'r1,r2',
+      }),
     )
   })
 })

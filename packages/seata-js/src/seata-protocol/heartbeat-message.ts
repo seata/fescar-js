@@ -15,15 +15,37 @@
  * limitations under the License.
  */
 
-import hessian from 'hessian.js'
-import { Serializer } from './serializer'
+import { MessageType } from './message-type'
 
-export class HessianSerializer implements Serializer {
-  serialize<T = any>(obj: T): Buffer {
-    return hessian.encode(obj, '2.0')
+export class HeartbeatMessage {
+  /**
+   * The constant PING.
+   */
+  static PING: HeartbeatMessage = new HeartbeatMessage(true)
+  /**
+   * The constant PONG.
+   */
+  static PONG: HeartbeatMessage = new HeartbeatMessage(false)
+
+  private ping: boolean = true
+
+  private constructor(ping: boolean) {
+    this.ping = ping
   }
 
-  deserialize<T = any>(buf: Buffer): T {
-    return hessian.decode(buf, '2.0')
+  getTypeCode() {
+    return MessageType.TYPE_HEARTBEAT_MSG
+  }
+
+  isPing() {
+    return this.ping
+  }
+
+  setPing(ping: boolean) {
+    this.ping = ping
+  }
+
+  toString() {
+    return this.ping ? 'services ping' : 'services pong'
   }
 }

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+import prot from './protocol-constants'
+
 export class RpcMessage {
   private id: number
   private messageType: number
@@ -39,6 +41,7 @@ export class RpcMessage {
 
   setId(id: number) {
     this.id = id
+    return this
   }
 
   getMessageType() {
@@ -47,6 +50,7 @@ export class RpcMessage {
 
   setMessageType(messageType: number) {
     this.messageType = messageType
+    return this
   }
 
   getCodec() {
@@ -55,6 +59,7 @@ export class RpcMessage {
 
   setCodec(codec: number) {
     this.codec = codec
+    return this
   }
 
   getCompressor() {
@@ -63,6 +68,7 @@ export class RpcMessage {
 
   setCompressor(compressor: number) {
     this.compressor = compressor
+    return this
   }
 
   getHeadMap() {
@@ -71,6 +77,7 @@ export class RpcMessage {
 
   setHeadMap(headMap: Map<string, string>) {
     this.headMap = headMap
+    return this
   }
 
   getBody() {
@@ -79,5 +86,13 @@ export class RpcMessage {
 
   setBody(body: Object) {
     this.body = body
+    return this
+  }
+
+  isHeartBeat() {
+    return (
+      this.messageType === prot.MSGTYPE_HEARTBEAT_REQUEST ||
+      this.messageType === prot.MSGTYPE_HEARTBEAT_RESPONSE
+    )
   }
 }
