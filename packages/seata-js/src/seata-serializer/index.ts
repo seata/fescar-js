@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { HessianSerializer } from './serializer-fst'
-import { FstSerializer } from './serializer-hessian'
+import { FstSerializer } from './serializer-fst'
+import { HessianSerializer } from './serializer-hessian'
 import { KryoSerializer } from './serializer-kryo'
 import { ProtoBufSerializer } from './serializer-protobuf'
 import { SeataSerializer } from './serializer-seata'
@@ -24,11 +24,11 @@ import { SerializerType } from './serializer'
 
 export default class SerializerFactory {
   private static serialMapping = {
-    [SerializerType[SerializerType.FST]!]: new FstSerializer(),
-    [SerializerType[SerializerType.HESSIAN]!]: new HessianSerializer(),
-    [SerializerType[SerializerType.KRYO]!]: new KryoSerializer(),
-    [SerializerType[SerializerType.PROTOBUF]!]: new ProtoBufSerializer(),
-    [SerializerType[SerializerType.SEATA]!]: new SeataSerializer()
+    [SerializerType.FST]: new FstSerializer(),
+    [SerializerType.HESSIAN]: new HessianSerializer(),
+    [SerializerType.KRYO]: new KryoSerializer(),
+    [SerializerType.PROTOBUF]: new ProtoBufSerializer(),
+    [SerializerType.SEATA]: new SeataSerializer(),
   }
 
   static getSerializer(code: SerializerType) {

@@ -71,5 +71,5 @@ export enum CompressorType {
   /**
    * The zstd.
    */
-  ZSTD = 7
+  ZSTD = 7,
 }

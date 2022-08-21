@@ -35,5 +35,5 @@ export enum BranchType {
   /**
    * The XA.
    */
-  XA
+  XA,
 }

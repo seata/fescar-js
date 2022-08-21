@@ -31,7 +31,7 @@ export default interface TransactionManager {
     applicationId: string,
     transactionServiceGroup: string,
     name: string,
-    timeout: number
+    timeout: number,
   ): string
 
   /**

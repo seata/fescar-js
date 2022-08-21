@@ -15,11 +15,13 @@
  * limitations under the License.
  */
 
+import { debuglog } from 'util'
 import ByteBuffer from './byte-buffer'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
 import prot from '../../seata-protocol/protocol-constants'
 import SerializerFactory from '../../seata-serializer'
 import { CompressorFactory } from '../../seata-compressor'
+import { HeadMapSerializer } from './headmap-serializer'
 
 /**
  * <pre>
@@ -45,34 +47,32 @@ import { CompressorFactory } from '../../seata-compressor'
  * https://github.com/seata/seata/issues/893
  */
 
-import { debuglog } from 'util'
+const log = debuglog(`seata:prot:v1:encoder`)
 
-const log = debuglog(`prot:v1:encoder`)
 export class ProtocolV1Encoder {
-  encode(msg: RpcMessage) {
+  static encode(msg: RpcMessage) {
     log(`encode rpc message %j`, msg)
     // check msg type
     if (!(msg instanceof RpcMessage)) {
       throw new Error(`Not support this class:` + msg)
     }
 
+    let headLength = prot.V1_HEAD_LENGTH
+
     const buff = new ByteBuffer()
-      .addShort(prot.MAGIC_CODE_S)
-      .addByte(prot.VERSION)
+      .writeShort(prot.MAGIC_CODE_S)
+      .writeByte(prot.VERSION)
       // place hold full length,it will fix in the end
-      .addInt(0)
+      .writeInt(0)
       // place hold head length,it will fix in the end
-      .addShort(0)
-      .addByte(msg.getMessageType())
-      .addByte(msg.getCodec())
-      .addByte(msg.getCompressor())
-      .addInt(msg.getId())
+      .writeShort(0)
+      .writeByte(msg.getMessageType())
+      .writeByte(msg.getCodec())
+      .writeByte(msg.getCompressor())
+      .writeInt(msg.getId())
 
     // optional map
-    const headMap = msg.getHeadMap()
-    if (headMap != null && headMap.size > 0) {
-      // todo
-    }
+    headLength += HeadMapSerializer.encode(msg.getHeadMap(), buff)
 
     // body exclude heartbeat request and response
     // heartbeat no body
@@ -82,8 +82,15 @@ export class ProtocolV1Encoder {
       let body = serializer.serialize(msg.getBody())
       const compressor = CompressorFactory.getCompressor(msg.getCompressor())
       body = compressor.compress(body)
-      buff.addBytes(body)
+      buff.writeBytes(body)
     }
+
+    // write head length and full length
+    log(`write head length: ${headLength} and full length: ${buff.getOffset()}`)
+    // fixed full length
+    buff.writeInt(buff.getOffset(), { offset: 3, unsigned: true })
+    // fixed head length
+    buff.writeShort(headLength, { offset: 7, unsigned: true })
 
     return buff.buffer()
   }

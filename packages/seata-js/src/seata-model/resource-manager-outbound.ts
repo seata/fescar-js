@@ -36,7 +36,7 @@ export interface ResourceManagerOutbound {
     clientId: string,
     xid: string,
     applicationData: string,
-    lockKeys: string
+    lockKeys: string,
   ): Promise<number>
 
   /**
@@ -53,7 +53,7 @@ export interface ResourceManagerOutbound {
     xid: string,
     branchId: number,
     status: BranchStatus,
-    applicationData: string
+    applicationData: string,
   ): Promise<void>
 
   /**
@@ -69,6 +69,6 @@ export interface ResourceManagerOutbound {
     branchType: BranchType,
     resourceId: string,
     xid: string,
-    lockKeys: string
+    lockKeys: string,
   ): Promise<boolean>
 }

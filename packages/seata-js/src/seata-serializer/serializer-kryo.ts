@@ -17,12 +17,12 @@
 
 import { Serializer } from './serializer'
 
-export class KryoSerializer<T> implements Serializer<T> {
-  serialize(obj: any): Buffer {
+export class KryoSerializer implements Serializer {
+  serialize<T = any>(obj: T): Buffer {
     return Buffer.alloc(10)
   }
 
-  deserialize(buf: Buffer): T {
+  deserialize<T = any>(buf: Buffer): T {
     return {} as T
   }
 }

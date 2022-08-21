@@ -17,12 +17,12 @@
 
 import { Serializer } from './serializer'
 
-export class HessianSerializer<T> implements Serializer<T> {
-  serialize(obj: any): Buffer {
+export class FstSerializer implements Serializer {
+  serialize<T = any>(obj: T): Buffer {
     return Buffer.alloc(10)
   }
 
-  deserialize(buf: Buffer): T {
+  deserialize<T = any>(buf: Buffer): T {
     return {} as T
   }
 }

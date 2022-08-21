@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-export interface Serializer<T> {
+export interface Serializer {
   /**
    * encode T to bytes
    * @param obj
    */
-  serialize(obj: T): Buffer
+  serialize<T>(obj: T): Buffer
 
   /**
    * decode bytes to Te
    * @param buf
    */
-  deserialize(buf: Buffer): T
+  deserialize<T>(buf: Buffer): T
 }
 
 export enum SerializerType {
@@ -63,5 +63,5 @@ export enum SerializerType {
    * <p>
    * Math.pow=2, 4
    */
-  HESSIAN = 0x16
+  HESSIAN = 0x16,
 }

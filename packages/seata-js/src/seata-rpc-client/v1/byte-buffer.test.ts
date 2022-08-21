@@ -20,21 +20,20 @@ import ByteBuffer from './byte-buffer'
 describe('byte buffer test suite', () => {
   it('test write some thing..', () => {
     const buf = new ByteBuffer()
-      .addByte(10)
-      .addShort(0xdada)
-      .addInt(0x01010101)
+      .writeByte(10)
+      .writeShort(0xdada)
+      .writeInt(0x01010101)
       .buffer()
-
     expect(buf.length).toEqual(7)
   })
 
   it('test write custom offset', () => {
     const buf = new ByteBuffer()
-      .addBytes(Buffer.from('123'))
-      .addByte(10, 10)
-      .addByte(9, 8)
-      .addString('abc')
-      .addBytes(Buffer.alloc(5).fill(1), 0)
+      .writeBytes(Buffer.from('123'))
+      .writeByte(10, { offset: 10 })
+      .writeByte(9, { offset: 8 })
+      .writeString('abc')
+      .writeBytes(Buffer.alloc(5).fill(1), { offset: 0 })
       .buffer()
     expect(buf.length).toEqual(19)
     expect(buf.subarray(11, 14).toString()).toEqual('abc')
@@ -44,11 +43,28 @@ describe('byte buffer test suite', () => {
   it('test custom default alloc size', () => {
     const buf = new ByteBuffer({ defaultAllocSize: 5 })
     expect((buf as any).capacity).toEqual(5)
-    buf.addString(`abcdefg`)
+    buf.writeString(`abcdefg`)
     // expand default alloc size
     expect((buf as any).capacity).toEqual(10)
-    buf.addString(`hijklmnoprst`)
+    buf.writeString(`hijklmnoprst`)
     // expand Offset - this.capacity
     expect((buf as any).capacity).toEqual(19)
+  })
+
+  it('test read some thing', () => {
+    const buffer = new ByteBuffer()
+      .writeByte(1)
+      .writeShort(21)
+      .writeInt(0x01010101)
+      .writeBytes(Buffer.from('hello'))
+      .writeString('world')
+      .buffer()
+
+    const reader = new ByteBuffer({ buffer }).resetOffset()
+    expect(reader.readByte()).toEqual(1)
+    expect(reader.readShort({ unsigned: true })).toEqual(21)
+    expect(reader.readInt({ unsigned: false })).toEqual(0x01010101)
+    expect(reader.readBytes({ len: 4 }).toString()).toEqual('hell')
+    expect(reader.readString()).toEqual('oworld')
   })
 })

@@ -46,7 +46,7 @@ export class AbstractIdentifyRequest {
   constructor(
     applicationId: string,
     transactionServiceGroup: string,
-    extraData?: string
+    extraData?: string,
   ) {
     this.version = '1.0'
     this.applicationId = applicationId

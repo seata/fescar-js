@@ -15,15 +15,10 @@
  * limitations under the License.
  */
 
-import hessian from 'hessian.js'
-import { Serializer } from './serializer'
+export function isEmptyMap(m: Map<any, any>) {
+  return m === undefined || m === null || m.size === 0
+}
 
-export class HessianSerializer implements Serializer {
-  serialize<T = any>(obj: T): Buffer {
-    return hessian.encode(obj, '2.0')
-  }
-
-  deserialize<T = any>(buf: Buffer): T {
-    return hessian.decode(buf, '2.0')
-  }
+export function isNil(o: any) {
+  return o === undefined || o === null
 }

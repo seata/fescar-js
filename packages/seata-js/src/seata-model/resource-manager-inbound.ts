@@ -34,7 +34,7 @@ export interface ResourceManagerInbound {
     xid: string,
     branchId: number,
     resourceId: string,
-    applicationData: string
+    applicationData: string,
   ): Promise<BranchStatus>
 
   /**
@@ -52,6 +52,6 @@ export interface ResourceManagerInbound {
     xid: string,
     branchId: number,
     resourceId: string,
-    applicationData: string
+    applicationData: string,
   ): Promise<BranchStatus>
 }
