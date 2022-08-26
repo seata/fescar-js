@@ -84,7 +84,7 @@ export default class SeataTcpBuffer {
         // find first right magic code
         if (magicLowIndex - magicHighIndex === 1) {
           // clear buffer until magic high code
-          this.buff.slice(magicHighIndex)
+          this.buff.splice(0, magicHighIndex)
 
           if (this.buff.getLength() < prot.V1_HEAD_LENGTH) {
             return
