@@ -18,6 +18,24 @@
 import ByteBuffer from './byte-buffer'
 
 describe('byte buffer test suite', () => {
+  it('test init buffer', () => {
+    {
+      // test init buffer with no argument
+      const buffer = new ByteBuffer()
+      expect(buffer.getOffset()).toEqual(0)
+      expect(buffer.getLength()).toEqual(0)
+      expect(buffer.getCapacity()).toEqual(1024)
+    }
+
+    {
+      // test init buffer with buffer
+      const buffer = new ByteBuffer({ buffer: Buffer.from('abc') })
+      expect(buffer.getOffset()).toEqual(0)
+      expect(buffer.getLength()).toEqual(3)
+      expect(buffer.getCapacity()).toEqual(1024)
+    }
+  })
+
   it('test write some thing..', () => {
     const buf = new ByteBuffer()
       .writeByte(10)
@@ -32,6 +50,7 @@ describe('byte buffer test suite', () => {
       .writeBytes(Buffer.from('123'))
       .writeByte(10, { offset: 10 })
       .writeByte(9, { offset: 8 })
+      .resetOffset(11)
       .writeString('abc')
       .writeBytes(Buffer.alloc(5).fill(1), { offset: 0 })
       .buffer()
@@ -42,6 +61,7 @@ describe('byte buffer test suite', () => {
 
   it('test custom default alloc size', () => {
     const buf = new ByteBuffer({ defaultAllocSize: 5 })
+
     expect((buf as any).capacity).toEqual(5)
     buf.writeString(`abcdefg`)
     // expand default alloc size
@@ -66,5 +86,42 @@ describe('byte buffer test suite', () => {
     expect(reader.readInt({ unsigned: false })).toEqual(0x01010101)
     expect(reader.readBytes({ len: 4 }).toString()).toEqual('hell')
     expect(reader.readString()).toEqual('oworld')
+  })
+
+  it('test slice and splice', () => {
+    {
+      // test slice
+      const buff = new ByteBuffer({ buffer: Buffer.alloc(10).fill(0) })
+      buff.writeInt(0x01020304)
+      const sub = buff.slice(2, 4)
+      expect(sub[0]).toEqual(0x03)
+      expect(sub[1]).toEqual(0x04)
+    }
+
+    {
+      // test splice
+      const buff = new ByteBuffer({ buffer: Buffer.alloc(10).fill(0) })
+      buff.writeInt(0x01020304)
+      buff.writeInt(0x05060708)
+      buff.writeShort(0x090a)
+
+      // slice from start
+      const sub = buff.splice(0, 2)
+      expect(sub[0]).toEqual(0x01)
+      expect(sub[1]).toEqual(0x02)
+      expect(buff.getLength()).toEqual(8)
+      expect(buff.getOffset()).toEqual(0)
+
+      // slice from middle
+
+      const sub1 = buff.splice(1, 3)
+      expect(buff.buffer()[0]).toEqual(0x03)
+      expect(sub1.length).toEqual(2)
+      expect(sub1[0]).toEqual(0x04)
+      expect(sub1[1]).toEqual(0x05)
+
+      expect(buff.getOffset()).toEqual(1)
+      expect(buff.getLength()).toEqual(6)
+    }
   })
 })

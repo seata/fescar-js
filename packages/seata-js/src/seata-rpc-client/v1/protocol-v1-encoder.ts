@@ -16,7 +16,7 @@
  */
 
 import { debuglog } from 'util'
-import ByteBuffer from './byte-buffer'
+import ByteBuffer from '../../seata-common/byte-buffer'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
 import prot from '../../seata-protocol/protocol-constants'
 import SerializerFactory from '../../seata-serializer'
@@ -76,7 +76,7 @@ export class ProtocolV1Encoder {
 
     // body exclude heartbeat request and response
     // heartbeat no body
-    if (!msg.isHeartBeat()) {
+    if (!msg.isHeartBeatType()) {
       // serialize body
       const serializer = SerializerFactory.getSerializer(msg.getCodec())
       let body = serializer.serialize(msg.getBody())

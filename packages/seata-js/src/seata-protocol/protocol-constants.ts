@@ -16,6 +16,8 @@
  */
 
 export default {
+  MAGIC_HIGH: 0xda,
+  MAGIC_LOW: 0xda,
   /**
    * Magic code
    */

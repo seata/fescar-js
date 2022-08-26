@@ -3,7 +3,6 @@
     "incremental": true,
     "target": "es2017",
     "module": "commonjs",
-
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -12,23 +11,18 @@
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
-
     "esModuleInterop": true,
-
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-
     "types": ["vitest/globals"]
   }
 }

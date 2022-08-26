@@ -15,10 +15,44 @@
  * limitations under the License.
  */
 
-import { isEmptyMap, isNil } from '../../seata-common'
-import ByteBuffer from './byte-buffer'
+import { isEmptyMap, isNil } from '../../seata-common/util'
+import ByteBuffer from '../../seata-common/byte-buffer'
 
 export class HeadMapSerializer {
+  static encode(map: Map<string, string>, buff: ByteBuffer) {
+    // check map
+    if (isEmptyMap(map)) {
+      return 0
+    }
+
+    const start = buff.getOffset()
+    for (let [k, v] of map) {
+      if (!isNil(k)) {
+        HeadMapSerializer.writeString(buff, k)
+        HeadMapSerializer.writeString(buff, v)
+      }
+    }
+    return buff.getOffset() - start
+  }
+
+  static decode(buff: ByteBuffer, len: number): Map<string, string> {
+    const map = new Map<string, string>()
+    if (isNil(buff) || buff.getOffset() === buff.getLength() || len <= 0) {
+      return map
+    }
+    const start = buff.getOffset()
+
+    while (buff.getOffset() - start < len) {
+      const k = HeadMapSerializer.readString(buff)
+      const v = HeadMapSerializer.readString(buff)
+      if (!isNil(k)) {
+        map.set(k, v)
+      }
+    }
+
+    return map
+  }
+
   private static writeString(out: ByteBuffer, str: string) {
     if (str == null) {
       out.writeShort(-1)
@@ -38,39 +72,5 @@ export class HeadMapSerializer {
     } else {
       return buf.readBytes({ len }).toString('utf8')
     }
-  }
-
-  static encode(map: Map<string, string>, buff: ByteBuffer) {
-    // check map
-    if (isEmptyMap(map)) {
-      return 0
-    }
-
-    const start = buff.getOffset()
-    for (let [k, v] of map) {
-      if (!isNil(k)) {
-        HeadMapSerializer.writeString(buff, k)
-        HeadMapSerializer.writeString(buff, v)
-      }
-    }
-    return buff.getOffset() - start
-  }
-
-  static decode(buff: ByteBuffer, len: number): Map<string, string> {
-    const map = new Map<string, string>()
-    if (isNil(buff) || buff.isEnd() || len <= 0) {
-      return map
-    }
-    const start = buff.getOffset()
-
-    while (buff.getOffset() - start < len) {
-      const k = HeadMapSerializer.readString(buff)
-      const v = HeadMapSerializer.readString(buff)
-      if (!isNil(k)) {
-        map.set(k, v)
-      }
-    }
-
-    return map
   }
 }

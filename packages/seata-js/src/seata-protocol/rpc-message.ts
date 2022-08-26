@@ -16,6 +16,7 @@
  */
 
 import prot from './protocol-constants'
+import { HeartbeatMessage } from './heartbeat-message'
 
 export class RpcMessage {
   private id: number
@@ -89,10 +90,14 @@ export class RpcMessage {
     return this
   }
 
-  isHeartBeat() {
+  isHeartBeatType() {
     return (
       this.messageType === prot.MSGTYPE_HEARTBEAT_REQUEST ||
       this.messageType === prot.MSGTYPE_HEARTBEAT_RESPONSE
     )
+  }
+
+  isHeartBeat() {
+    return this.getBody() === HeartbeatMessage.PONG
   }
 }
