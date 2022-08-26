@@ -74,21 +74,24 @@ export default class SeataTcpBuffer {
       const magicHighIndex = this.buff.indexOf(prot.MAGIC_HIGH)
       const magicLowIndex = this.buff.indexOf(prot.MAGIC_LOW)
 
-      if (magicHighIndex !== 0 && magicLowIndex !== 1) {
+      const hadMagicCode = magicHighIndex !== -1 && magicLowIndex !== -1
+      const invalidMagicPosition = magicHighIndex !== 0 || magicLowIndex !== 1
+
+      if (hadMagicCode && invalidMagicPosition) {
         log(
           'magic code invalid with (magicHigh#%d, magicLow#%d), discard buff',
           magicHighIndex,
           magicLowIndex,
         )
 
-        // find first right magic code
         if (magicLowIndex - magicHighIndex === 1) {
-          // clear buffer until magic high code
           this.buff.splice(0, magicHighIndex)
+        } else {
+          this.buff.splice(0, Math.max(magicHighIndex, magicLowIndex) + 1)
+        }
 
-          if (this.buff.getLength() < prot.V1_HEAD_LENGTH) {
-            return
-          }
+        if (this.buff.getLength() < prot.V1_HEAD_LENGTH) {
+          return
         }
       }
 
