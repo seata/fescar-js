@@ -15,4 +15,14 @@
  * limitations under the License.
  */
 
-export class ProtocolV1DecodeBuffer {}
+export function isEmptyMap(m: Map<any, any>) {
+  return m === undefined || m === null || m.size === 0
+}
+
+export function isNil(o: any) {
+  return o === undefined || o === null
+}
+
+export function noop() {
+  // do noting
+}

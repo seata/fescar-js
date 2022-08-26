@@ -16,7 +16,7 @@
  */
 
 import { debuglog } from 'util'
-import ByteBuffer from './byte-buffer'
+import ByteBuffer from '../../seata-common/byte-buffer'
 import prot from '../../seata-protocol/protocol-constants'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
 import { HeadMapSerializer } from './headmap-serializer'
@@ -66,6 +66,7 @@ export class ProtocolV1Decoder {
 
     const fullLength = frame.readInt({ unsigned: true })
     const headLength = frame.readShort({ unsigned: true })
+    console.log(frame.getOffset(), frame.getLength())
     const messageType = frame.readByte()
     const codecType = frame.readByte()
     const compressorType = frame.readByte()
