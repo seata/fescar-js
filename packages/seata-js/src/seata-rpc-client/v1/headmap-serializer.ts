@@ -25,24 +25,25 @@ export class HeadMapSerializer {
       return 0
     }
 
-    const start = buff.getOffset()
+    const start = buff.getWriteIndex()
     for (let [k, v] of map) {
       if (!isNil(k)) {
         HeadMapSerializer.writeString(buff, k)
         HeadMapSerializer.writeString(buff, v)
       }
     }
-    return buff.getOffset() - start
+    return buff.getWriteIndex() - start
   }
 
   static decode(buff: ByteBuffer, len: number): Map<string, string> {
     const map = new Map<string, string>()
-    if (isNil(buff) || buff.getOffset() === buff.getLength() || len <= 0) {
+
+    if (isNil(buff) || buff.getReadIndex() === buff.getLength() || len <= 0) {
       return map
     }
-    const start = buff.getOffset()
 
-    while (buff.getOffset() - start < len) {
+    const start = buff.getReadIndex()
+    while (buff.getReadIndex() - start < len) {
       const k = HeadMapSerializer.readString(buff)
       const v = HeadMapSerializer.readString(buff)
       if (!isNil(k)) {

@@ -35,65 +35,70 @@ const log = debug('seata:tcp-buffer')
  * 我们需要抽取一个buffer来统一处理这些数据
  */
 export default class SeataTcpBuffer {
+  private readonly remoteAddr: string
+
   private transport: Socket
   private buff: ByteBuffer
 
-  private readonly remoteAddr: string
   private subscriber: Function
 
   constructor(transport: Socket) {
-    const { remoteAddress, remotePort } = transport
+    this.transport = transport
+    const { remoteAddress, remotePort } = this.transport
+    this.remoteAddr = remoteAddress + ':' + remotePort
     log('create new tcp buff with transport %s', remoteAddress)
 
-    this.transport = transport
-    this.remoteAddr = remoteAddress + ':' + remotePort
-
-    this.buff = new ByteBuffer()
     this.subscriber = noop
+    this.buff = new ByteBuffer()
 
     process.nextTick(() => {
       this.transport
         .on('data', (data: Buffer) => this.receive(data))
         .on('close', () => {
           log('transport %s closed', this.remoteAddr)
-          // @ts-ignore
-          this.buff = null
         })
     })
   }
 
   receive(data: Buffer) {
     log('receive data from %s', this.remoteAddr)
-    // get current length
-    const len = this.buff.getLength()
+    // concat data into buffer
+    this.buff.writeBytes(data)
 
-    // append mode
-    this.buff.writeBytes(data, { offset: len - 1 })
+    while (this.buff.getLength() >= prot.V1_HEAD_LENGTH) {
+      const highMagicIndex = this.buff.indexOf(prot.MAGIC_HIGH)
+      const lowMagicIndex = this.buff.indexOf(prot.MAGIC_LOW)
 
-    while (len >= prot.V1_HEAD_LENGTH) {
-      const magicHighIndex = this.buff.indexOf(prot.MAGIC_HIGH)
-      const magicLowIndex = this.buff.indexOf(prot.MAGIC_LOW)
+      // check magic high index and magic low index
+      if (highMagicIndex !== -1 && lowMagicIndex !== -1) {
+        return
+      }
 
-      if (magicHighIndex !== 0 && magicLowIndex !== 1) {
+      // resolve wrong magic position
+      if (highMagicIndex !== 0 || lowMagicIndex !== 1) {
         log(
           'magic code invalid with (magicHigh#%d, magicLow#%d), discard buff',
-          magicHighIndex,
-          magicLowIndex,
+          highMagicIndex,
+          lowMagicIndex,
         )
 
-        // find first right magic code
-        if (magicLowIndex - magicHighIndex === 1) {
-          // clear buffer until magic high code
-          this.buff.slice(magicHighIndex)
-
-          if (this.buff.getLength() < prot.V1_HEAD_LENGTH) {
+        if (lowMagicIndex - highMagicIndex === 1) {
+          this.buff.splice(0, highMagicIndex)
+        } else {
+          const maxMagicPosition = Math.max(highMagicIndex, lowMagicIndex)
+          if (maxMagicPosition + 1 >= this.buff.getLength()) {
             return
           }
+          this.buff.splice(0, maxMagicPosition + 1)
+        }
+
+        if (this.buff.getLength() < prot.V1_HEAD_LENGTH) {
+          return
         }
       }
 
       // read full length
-      const fullLength = this.buff.readInt({ unsigned: true, offset: 3 })
+      const fullLength = this.buff.readInt({ unsigned: true, index: 3 })
       const buff = this.buff.splice(0, fullLength)
 
       this.subscriber(buff)

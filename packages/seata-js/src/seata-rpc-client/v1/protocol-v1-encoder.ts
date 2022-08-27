@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { debuglog } from 'util'
+import debug from 'debug'
 import ByteBuffer from '../../seata-common/byte-buffer'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
 import prot from '../../seata-protocol/protocol-constants'
@@ -47,7 +47,7 @@ import { HeadMapSerializer } from './headmap-serializer'
  * https://github.com/seata/seata/issues/893
  */
 
-const log = debuglog(`seata:prot:v1:encoder`)
+const log = debug(`seata:prot:v1:encoder`)
 
 export class ProtocolV1Encoder {
   static encode(msg: RpcMessage) {
@@ -86,11 +86,11 @@ export class ProtocolV1Encoder {
     }
 
     // write head length and full length
-    log(`write head length: ${headLength} and full length: ${buff.getOffset()}`)
+    log(`write head length: ${headLength} and full length: ${buff.getLength()}`)
     // fixed full length
-    buff.writeInt(buff.getOffset(), { offset: 3, unsigned: true })
+    buff.writeInt(buff.getLength(), { index: 3, unsigned: true })
     // fixed head length
-    buff.writeShort(headLength, { offset: 7, unsigned: true })
+    buff.writeShort(headLength, { index: 7, unsigned: true })
 
     return buff.buffer()
   }
