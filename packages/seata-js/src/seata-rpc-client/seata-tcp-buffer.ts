@@ -60,38 +60,25 @@ export default class SeataTcpBuffer {
     })
   }
 
-  receive(data: Buffer) {
+  private receive(data: Buffer) {
     log('receive data from %s', this.remoteAddr)
     // concat data into buffer
     this.buff.writeBytes(data)
 
     while (this.buff.getLength() >= prot.V1_HEAD_LENGTH) {
-      const highMagicIndex = this.buff.indexOf(prot.MAGIC_HIGH)
-      const lowMagicIndex = this.buff.indexOf(prot.MAGIC_LOW)
+      const magicCodeIndex = this.buff.indexOf(
+        Buffer.from([prot.MAGIC_HIGH, prot.MAGIC_LOW]),
+      )
+      log('magic code index %d', magicCodeIndex)
 
-      // check magic high index and magic low index
-      if (highMagicIndex !== -1 && lowMagicIndex !== -1) {
+      // check magic code
+      if (magicCodeIndex === -1) {
         return
       }
 
       // resolve wrong magic position
-      if (highMagicIndex !== 0 || lowMagicIndex !== 1) {
-        log(
-          'magic code invalid with (magicHigh#%d, magicLow#%d), discard buff',
-          highMagicIndex,
-          lowMagicIndex,
-        )
-
-        if (lowMagicIndex - highMagicIndex === 1) {
-          this.buff.splice(0, highMagicIndex)
-        } else {
-          const maxMagicPosition = Math.max(highMagicIndex, lowMagicIndex)
-          if (maxMagicPosition + 1 >= this.buff.getLength()) {
-            return
-          }
-          this.buff.splice(0, maxMagicPosition + 1)
-        }
-
+      if (magicCodeIndex != 0) {
+        this.buff.splice(0, magicCodeIndex)
         if (this.buff.getLength() < prot.V1_HEAD_LENGTH) {
           return
         }
@@ -99,7 +86,6 @@ export default class SeataTcpBuffer {
 
       // read full length
       const fullLength = this.buff.readInt({ unsigned: true, index: 3 })
-
       // check full length
       if (fullLength > this.buff.getLength()) {
         //waiting
