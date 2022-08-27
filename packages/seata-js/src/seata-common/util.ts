@@ -26,3 +26,11 @@ export function isNil(o: any) {
 export function noop() {
   // do noting
 }
+
+export function sleep(delay: number = 1000) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(null)
+    }, delay)
+  })
+}

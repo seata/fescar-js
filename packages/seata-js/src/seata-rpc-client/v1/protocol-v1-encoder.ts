@@ -86,7 +86,11 @@ export class ProtocolV1Encoder {
     }
 
     // write head length and full length
-    log(`write head length: ${headLength} and full length: ${buff.getLength()}`)
+    log(
+      `write: head-length: %d and full-length: %d}`,
+      headLength,
+      buff.getLength(),
+    )
     // fixed full length
     buff.writeInt(buff.getLength(), { index: 3, unsigned: true })
     // fixed head length
