@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { debuglog } from 'util'
+import debug from 'debug'
 import ByteBuffer from '../../seata-common/byte-buffer'
 import prot from '../../seata-protocol/protocol-constants'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
@@ -48,11 +48,11 @@ import SerializerFactory from '../../seata-serializer'
  * https://github.com/seata/seata/issues/893
  */
 
-const log = debuglog(`prot:v1:decoder`)
+const log = debug(`prot:v1:decoder`)
 
 export class ProtocolV1Decoder {
   static decode(buffer: Buffer) {
-    const frame = new ByteBuffer({ buffer }).resetOffset()
+    const frame = new ByteBuffer({ buffer })
 
     // read magic
     const magic = frame.readShort({ unsigned: true })
@@ -66,7 +66,6 @@ export class ProtocolV1Decoder {
 
     const fullLength = frame.readInt({ unsigned: true })
     const headLength = frame.readShort({ unsigned: true })
-    console.log(frame.getOffset(), frame.getLength())
     const messageType = frame.readByte()
     const codecType = frame.readByte()
     const compressorType = frame.readByte()
