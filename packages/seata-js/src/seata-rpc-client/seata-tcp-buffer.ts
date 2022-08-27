@@ -99,8 +99,20 @@ export default class SeataTcpBuffer {
 
       // read full length
       const fullLength = this.buff.readInt({ unsigned: true, index: 3 })
-      const buff = this.buff.splice(0, fullLength)
 
+      // check full length
+      if (fullLength > this.buff.getLength()) {
+        //waiting
+        log(
+          'fullLength %d > buffer length %d',
+          fullLength,
+          this.buff.getLength(),
+        )
+        return
+      }
+
+      // splice buff
+      const buff = this.buff.splice(0, fullLength)
       this.subscriber(buff)
     }
   }
