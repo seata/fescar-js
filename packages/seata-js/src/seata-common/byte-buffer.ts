@@ -307,6 +307,12 @@ export default class ByteBuffer {
     return this.buff.subarray(start, end)
   }
 
+  /**
+   * splice buffer
+   * @param start
+   * @param end
+   * @returns
+   */
   splice(start: number, end?: number) {
     end ||= this.length
     if (end > this.capacity) {
@@ -320,9 +326,11 @@ export default class ByteBuffer {
     ])
 
     this.length -= end - start
+
     if (this.writeIndex > end) {
       this.writeIndex -= end - start
     }
+
     if (this.readIndex > end) {
       this.readIndex -= end - start
     }
@@ -339,10 +347,19 @@ export default class ByteBuffer {
     return this.buff.subarray(0, this.length)
   }
 
+  /**
+   * get read index
+   * @returns read index
+   */
   getReadIndex() {
     return this.readIndex
   }
 
+  /**
+   * get read index
+   * @param index
+   * @returns
+   */
   resetReadIndex(index?: number) {
     index ||= 0
     this.readIndex = index
@@ -350,10 +367,19 @@ export default class ByteBuffer {
     return this
   }
 
+  /**
+   * get write index
+   * @returns write index
+   */
   getWriteIndex() {
     return this.writeIndex
   }
 
+  /**
+   * reset write index
+   * @param index
+   * @returns
+   */
   resetWriteIndex(index?: number) {
     index ||= 0
     this.writeIndex = index
