@@ -19,11 +19,11 @@ import { Socket } from 'net'
 import { EventEmitter } from 'events'
 
 import SeataTcpBuffer from './seata-tcp-buffer'
-import { RpcMessage } from '../seata-protocol/rpc-message'
-import { MessageType } from '../seata-protocol/message-type'
-import { SerializerType } from '../seata-serializer/serializer'
-import { CompressorType } from '../seata-compressor/compressor'
-import { ProtocolV1Encoder } from './v1/protocol-v1-encoder'
+import { RpcMessage } from '../../seata-protocol/rpc-message'
+import { MessageType } from '../../seata-protocol/message-type'
+import { SerializerType } from '../../seata-serializer/serializer'
+import { CompressorType } from '../../seata-compressor/compressor'
+import { ProtocolV1Encoder } from '../v1/protocol-v1-encoder'
 
 class TcpTransport extends EventEmitter {
   remoteAddress: string

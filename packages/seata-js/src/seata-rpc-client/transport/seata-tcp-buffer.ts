@@ -19,9 +19,9 @@ import { Socket } from 'net'
 import { Buffer } from 'node:buffer'
 import debug from 'debug'
 
-import { noop } from '../seata-common/util'
-import ByteBuffer from '../seata-common/byte-buffer'
-import prot from '../seata-protocol/protocol-constants'
+import { noop } from '../../seata-common/util'
+import ByteBuffer from '../../seata-common/byte-buffer'
+import prot from '../../seata-protocol/protocol-constants'
 
 export interface SeataTcpBufferSubscriber {
   (data: Buffer): void

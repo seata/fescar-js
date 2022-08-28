@@ -15,4 +15,48 @@
  * limitations under the License.
  */
 
-export class SeataQueue {}
+import debug from 'debug'
+import { noop } from '../seata-common/util'
+import { RpcMessage } from '../seata-protocol/rpc-message'
+
+export type SeataQueueId = number
+export type SeataQueueSubscribe = (id: SeataQueueId, msg: RpcMessage) => void
+export interface SeataQueueValue {
+  msg: RpcMessage
+  resolve: Function
+  reject: Function
+}
+
+const log = debug('seata:rpc:seata-queue')
+
+export class SeataQueue {
+  private subscriber: SeataQueueSubscribe
+  private readonly queue: Map<SeataQueueId, SeataQueueValue>
+
+  constructor() {
+    this.queue = new Map()
+    this.subscriber = noop
+  }
+
+  async push(id: SeataQueueId, msg: RpcMessage): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.queue.set(id, { msg, resolve, reject })
+      // TODO set max timeout
+      this.subscriber(id, msg)
+    })
+  }
+
+  consume(id: SeataQueueId) {
+    this.queue.get(id)
+  }
+
+  clear(id: SeataQueueId) {
+    log('clear queue %d', id)
+    this.queue.delete(id)
+  }
+
+  subscribe(subscribe: SeataQueueSubscribe) {
+    this.subscriber = subscribe
+    return this
+  }
+}
