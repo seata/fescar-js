@@ -15,4 +15,29 @@
  * limitations under the License.
  */
 
-export class SeataHeartBeat {}
+import { isEmptyMap, isNil, sleep } from './util'
+
+describe('util test suites', () => {
+  it('test isEmptyMap', () => {
+    expect(isEmptyMap(new Map())).toBe(true)
+    expect(isEmptyMap(new Map([['a', 'b']]))).toBe(false)
+    expect(isEmptyMap(undefined as unknown as Map<any, any>)).toBe(true)
+    expect(isEmptyMap(null as unknown as Map<any, any>)).toBe(true)
+  })
+
+  it('test isNil', () => {
+    expect(isNil(undefined)).toBe(true)
+    expect(isNil(null)).toBe(true)
+    expect(isNil(0)).toBe(false)
+    expect(isNil('')).toBe(false)
+    expect(isNil([])).toBe(false)
+    expect(isNil({})).toBe(false)
+  })
+
+  it('test sleep', async () => {
+    const start = Date.now()
+    await sleep()
+    const end = Date.now()
+    expect(end - start < 1005).toEqual(true)
+  })
+})

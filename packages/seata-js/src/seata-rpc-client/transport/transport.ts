@@ -15,4 +15,8 @@
  * limitations under the License.
  */
 
-export class SeataTcpTransport {}
+import { RpcMessage } from '../../seata-protocol/rpc-message'
+
+export interface SeataTransport {
+  send(msg: RpcMessage): Promise<any>
+}
