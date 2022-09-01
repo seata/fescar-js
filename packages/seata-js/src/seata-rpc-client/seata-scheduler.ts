@@ -15,4 +15,21 @@
  * limitations under the License.
  */
 
-export class SeataScheduler {}
+import { SeataQueue } from './seata-queue'
+
+export class SeataScheduler {
+  private queue: SeataQueue
+
+  constructor(tcServers: Set<string>, queue: SeataQueue) {
+    // init seata-cluster
+    console.log(tcServers)
+
+    this.queue = queue.subscribe((ctx) => {
+      console.log(ctx)
+    })
+  }
+
+  updateTcServers(tcServers: Set<string>) {
+    console.log(tcServers)
+  }
+}
