@@ -15,24 +15,42 @@
  * limitations under the License.
  */
 
-import debug from 'debug'
-import { SeataQueue } from './seata-queue'
+import config from '../seata-config/config'
+import { RpcMessage } from '../seata-protocol/rpc-message'
 
-const log = debug(`seata:rpc:scheduler`)
+export type SeataReqStatus = 'WAITING' | 'SENDED'
 
-export class SeataScheduler {
-  private queue: SeataQueue
+export class SeataContext {
+  public readonly msg: RpcMessage
+  public readonly resolve: Function
+  public readonly reject: Function
+  public status: SeataReqStatus
 
-  constructor(tcServers: Set<string>, queue: SeataQueue) {
-    // init seata-cluster
-    log(`init scheduler with: %s`, [...tcServers])
+  private timeoutManager!: NodeJS.Timeout
 
-    this.queue = queue.subscribe((ctx) => {
-      console.log(ctx)
-    })
+  constructor(
+    msg: RpcMessage,
+    resolve: Function,
+    reject: Function,
+    status: SeataReqStatus,
+  ) {
+    this.msg = msg
+    this.resolve = resolve
+    this.reject = reject
+    this.status = status
   }
 
-  updateTcServers(tcServers: Set<string>) {
-    console.log(tcServers)
+  get id() {
+    return this.msg.getId()
+  }
+
+  setMaxTimeout(cb: Function) {
+    this.timeoutManager = setTimeout(() => cb(), config.MAX_REQ_TIME_OUT)
+    return this
+  }
+
+  clearTimeout() {
+    clearTimeout(this.timeoutManager)
+    return this
   }
 }

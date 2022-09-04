@@ -15,4 +15,7 @@
  * limitations under the License.
  */
 
-export default {}
+export default {
+  // max request timeout
+  MAX_REQ_TIME_OUT: 10_000,
+}

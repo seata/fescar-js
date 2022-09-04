@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-export const enum STATUS {
+export const enum TransportStatus {
   PADDING = 'PADDING',
   CONNECTED = 'CONNECTED',
   CLOSED = 'CLOSED',

@@ -6,6 +6,7 @@
   "repository": "git@github.com:seata/seata-js.git",
   "scripts": {
     "prepack": "husky install",
+    "ts-check": "tsc --project ./packages/seata-js/tsconfig.json --noEmit",
     "test": "vitest run",
     "test:watch": "vitest"
   },

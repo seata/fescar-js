@@ -15,4 +15,20 @@
  * limitations under the License.
  */
 
-export class SeataRpcClient {}
+import { RpcMessage } from '../seata-protocol/rpc-message'
+import { SeataQueue } from './seata-queue'
+import { SeataScheduler } from './seata-scheduler'
+
+export class SeataRpcClient {
+  private queue: SeataQueue
+  private scheduler: SeataScheduler
+
+  constructor() {
+    this.queue = new SeataQueue()
+    this.scheduler = new SeataScheduler(new Set(), this.queue)
+  }
+
+  invokeRpcService<T = any>(msg: RpcMessage): Promise<T> {
+    return this.queue.push<T>(msg)
+  }
+}
