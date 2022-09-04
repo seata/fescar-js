@@ -15,14 +15,17 @@
  * limitations under the License.
  */
 
+import debug from 'debug'
 import { SeataQueue } from './seata-queue'
+
+const log = debug(`seata:rpc:scheduler`)
 
 export class SeataScheduler {
   private queue: SeataQueue
 
   constructor(tcServers: Set<string>, queue: SeataQueue) {
     // init seata-cluster
-    console.log(tcServers)
+    log(`init scheduler with: %s`, [...tcServers])
 
     this.queue = queue.subscribe((ctx) => {
       console.log(ctx)

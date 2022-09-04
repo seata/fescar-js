@@ -21,20 +21,19 @@ import config from '../seata-config/config'
 import { RpcMessage } from '../seata-protocol/rpc-message'
 import { SeataContext } from './seata-context'
 
-export type SeataResponse = {
+export type SeataQueueId = number
+export type SeataRpcResponse = {
   err: Error | null
   res: any
 }
-export type SeataQueueId = number
 export type SeataQueueSubscribe = (id: SeataQueueId, msg: SeataContext) => void
-export interface SeataQueueValue {
-  msg: RpcMessage
-  resolve: Function
-  reject: Function
-}
 
+// init log
 const log = debug('seata:rpc:seata-queue')
 
+/**
+ * seata-rpc-queue
+ */
 export class SeataQueue {
   private subscriber: SeataQueueSubscribe
   private readonly queue: Map<SeataQueueId, SeataContext>
@@ -76,7 +75,7 @@ export class SeataQueue {
    * @param param
    * @returns
    */
-  consume(id: SeataQueueId, { err, res }: SeataResponse) {
+  consume(id: SeataQueueId, { err, res }: SeataRpcResponse) {
     log(`get ctx by request id %d`, id)
     // get ctx by request id
     const ctx = this.queue.get(id)
@@ -116,5 +115,21 @@ export class SeataQueue {
   subscribe(subscribe: SeataQueueSubscribe) {
     this.subscriber = subscribe
     return this
+  }
+
+  /**
+   * current queue is wether empty or not
+   * @returns boolean
+   */
+  isEmpty() {
+    return this.size() === 0
+  }
+
+  /**
+   * get current queue size
+   * @returns number
+   */
+  size() {
+    return !this.queue ? 0 : this.queue.size
   }
 }
