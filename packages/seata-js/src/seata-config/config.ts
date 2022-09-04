@@ -15,6 +15,92 @@
  * limitations under the License.
  */
 
+/**
+ * The interface Configuration.
+ *
+ * @author godkun
+ */
+export interface Configuration {
+  /**
+   * Gets config.
+   *
+   * @param dataId       the data id
+   * @param defaultValue the default value
+   * @return the config
+   */
+  getConfig(dataId: string, defaultValue: string): string
+}
+
+/**
+ * The enum Config type.
+ *
+ * @author godkun
+ */
+export enum ConfigType {
+  /**
+   * File config type.
+   */
+  File,
+  /**
+   * zookeeper config type.
+   */
+  ZK,
+  /**
+   * Nacos config type.
+   */
+  Nacos,
+  /**
+   * Apollo config type.
+   */
+  Apollo,
+  /**
+   * Consul config type
+   */
+  Consul,
+  /**
+   * Etcd3 config type
+   */
+  Etcd3,
+  /**
+   * spring cloud config type
+   */
+  SpringCloudConfig,
+  /**
+   * Custom config type
+   */
+  Custom,
+}
+
+/**
+ * The enum Configuration change type.
+ */
+export enum ConfigurationChangeType {
+  /**
+   * Add configuration change type
+   */
+  ADD,
+  /**
+   * Modify configuration change type
+   */
+  MODIFY,
+  /**
+   * Delete configuration change type
+   */
+  DELETE,
+}
+
+/**
+ * the interface configuration provider
+ * @author godkun
+ */
+export interface ConfigurationProvider {
+  /**
+   * provide a AbstractConfiguration implementation instance
+   * @return Configuration
+   */
+  provide(): Configuration
+}
+
 export default {
   // max request timeout
   MAX_REQ_TIME_OUT: 10_000,
