@@ -15,22 +15,27 @@
  * limitations under the License.
  */
 
-export function isEmptyMap(m: Map<any, any>) {
-  return m === undefined || m === null || m.size === 0
-}
+import { genNextId } from './seata-id'
 
-export function isNil(o: any): o is undefined | null {
-  return o === undefined || o === null
-}
+const originNum = Number
 
-export function noop() {
-  // do noting
-}
+beforeAll(() => {
+  // @ts-ignore
+  global.Number = {
+    MAX_SAFE_INTEGER: 6,
+  }
+})
 
-export function sleep(delay: number = 1000) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(null)
-    }, delay)
-  })
-}
+it('test generate uuid', () => {
+  expect(genNextId()).toEqual(1)
+  expect(genNextId()).toEqual(2)
+  expect(genNextId()).toEqual(3)
+  expect(genNextId()).toEqual(4)
+  expect(genNextId()).toEqual(5)
+  expect(genNextId()).toEqual(1)
+  expect(genNextId()).toEqual(2)
+})
+
+afterAll(() => {
+  global.Number = originNum
+})

@@ -15,22 +15,13 @@
  * limitations under the License.
  */
 
-export function isEmptyMap(m: Map<any, any>) {
-  return m === undefined || m === null || m.size === 0
-}
+let uniqueId = 0
 
-export function isNil(o: any): o is undefined | null {
-  return o === undefined || o === null
-}
-
-export function noop() {
-  // do noting
-}
-
-export function sleep(delay: number = 1000) {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(null)
-    }, delay)
-  })
+export function genNextId() {
+  uniqueId = ++uniqueId
+  //reset
+  if (uniqueId === Number.MAX_SAFE_INTEGER) {
+    uniqueId = 1
+  }
+  return uniqueId
 }

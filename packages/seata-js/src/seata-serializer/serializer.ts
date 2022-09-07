@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+import { isNil } from '../seata-common/util'
+
+type SerializationTypeName = keyof typeof SerializerType
+
 export interface Serializer {
   /**
    * encode T to bytes
@@ -64,4 +68,17 @@ export enum SerializerType {
    * Math.pow=2, 4
    */
   HESSIAN = 0x16,
+}
+
+export function getSerializerTypeByName(name: '' | SerializationTypeName = '') {
+  if (isNil(name)) {
+    return SerializerType.SEATA
+  }
+
+  let type = SerializerType[name as SerializationTypeName]
+  if (isNil(type)) {
+    throw new Error(`unknown serializer type: ${name}`)
+  }
+
+  return type
 }

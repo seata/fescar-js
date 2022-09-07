@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 import { Buffer } from 'node:buffer'
+import { isNil } from '../seata-common/util'
+
+type CompressorTypeName = keyof typeof CompressorType
 
 export interface Compressor {
   /**
@@ -72,4 +75,17 @@ export enum CompressorType {
    * The zstd.
    */
   ZSTD = 7,
+}
+
+export function getCompressorByName(name: '' | CompressorTypeName = '') {
+  if (isNil(name)) {
+    return CompressorType.NONE
+  }
+
+  const type = CompressorType[name as CompressorTypeName]
+  if (isNil(type)) {
+    throw new Error(`unknown compressor type: ${name}`)
+  }
+
+  return type as number
 }

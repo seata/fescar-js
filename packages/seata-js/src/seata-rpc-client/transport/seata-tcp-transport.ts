@@ -16,6 +16,7 @@
  */
 
 import { Socket } from 'net'
+import debug from 'debug'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
 import { ProtocolV1Decoder } from '../v1/protocol-v1-decoder'
 import { ProtocolV1Encoder } from '../v1/protocol-v1-encoder'
@@ -30,19 +31,24 @@ interface SeataTransportPromise {
   reject: (reason?: any) => void
 }
 
+const log = debug(`seata:rpc:transport`)
+
 export class SeataTcpTransport implements SeataTransport {
   private readonly requestQueue: Map<id, SeataTransportPromise>
-  private transport: Socket
+  private readonly transport: Socket
+  private readonly host: string
+
   private heartBeat: SeataHeartBeat
 
-  constructor(host: string, port: number) {
+  constructor(hostname: string, port: number) {
+    this.host = `${hostname}:${port}`
     this.requestQueue = new Map()
 
     // set transport
     this.transport = new Socket()
     this.transport.setNoDelay()
     this.transport
-      .connect(port, host, this.handleSocketConnect)
+      .connect(port, hostname, this.handleSocketConnected)
       .on('error', this.handleSocketErr)
       .on('close', this.handleSocketClose)
 
@@ -62,13 +68,21 @@ export class SeataTcpTransport implements SeataTransport {
     })
   }
 
-  private handleSocketConnect = () => {}
+  private handleSocketConnected = () => {
+    log('tcp-transport = connecting => %s', this.host)
+  }
   private handleSocketErr = () => {}
   private handleSocketClose = () => {}
 
   private handleTcpBuffer = (data: Buffer) => {
     // decode message
     const msg = ProtocolV1Decoder.decode(data)
+
+    // 是不是心跳
+    if (msg.isHeartBeat()) {
+      this.heartBeat.receive()
+      return
+    }
 
     const val = this.requestQueue.get(msg.getId())
     if (val !== undefined) {
