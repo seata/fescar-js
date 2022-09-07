@@ -16,41 +16,45 @@
  */
 
 import { Socket } from 'net'
+import { HeartbeatMessage } from '../../seata-protocol/heartbeat-message'
+import AbstractSeataRemoting from './seata-abstract-remoting'
 
-const HEART_BEAT = 30000
+// reference: NettyBasicConfig.java
+const DEFAULT_WRITE_IDLE_SECONDS = 5_000
 
-export class SeataHeartBeat {
-  private transport: Socket
+export class SeataHeartBeat extends AbstractSeataRemoting {
+  private readonly heartBeatTimer: NodeJS.Timer
   private lastActivityTime: number
-  private heartBeatTimer: NodeJS.Timer
 
   constructor(transport: Socket) {
+    super(transport)
     this.lastActivityTime = 0
 
-    this.transport = transport
+    // init transport
     this.transport.on('data', () => {
       this.lastActivityTime = Date.now()
     })
 
-    this.heartBeatTimer = setInterval(this.manageHeartBeat, HEART_BEAT)
+    // init heartbeat timer
+    this.heartBeatTimer = setInterval(
+      this.handleHeartBeat,
+      DEFAULT_WRITE_IDLE_SECONDS,
+    )
   }
 
   setLastActivityTime(lastActivityTime: number) {
     this.lastActivityTime = lastActivityTime
   }
 
-  manageHeartBeat = () => {
-    const now = Date.now()
-    if (now - this.lastActivityTime > HEART_BEAT) {
-      this.send()
-    }
-  }
-
   /**
-   * send heartbeat message
+   * handle heartbeat
    */
-  async send(): Promise<void> {
-    this.lastActivityTime = Date.now()
+  handleHeartBeat = () => {
+    const now = Date.now()
+    if (now - this.lastActivityTime > DEFAULT_WRITE_IDLE_SECONDS) {
+      this.send(HeartbeatMessage.PING)
+      this.lastActivityTime = now
+    }
   }
 
   /**
@@ -60,14 +64,9 @@ export class SeataHeartBeat {
     this.lastActivityTime = Date.now()
   }
 
-  /**
-   * encode heartbeat message
-   */
-  encode() {}
-
   destroy() {
     clearInterval(this.heartBeatTimer)
     this.transport = null as unknown as Socket
-    this.lastActivityTime = -1
+    this.lastActivityTime = 0
   }
 }

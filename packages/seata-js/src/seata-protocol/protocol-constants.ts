@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+import { getCompressorByName } from '../seata-compressor/compressor'
+import { getSerializerTypeByName } from '../seata-serializer/serializer'
+
 export default {
   MAGIC_HIGH: 0xda,
   MAGIC_LOW: 0xda,
@@ -62,4 +65,14 @@ export default {
    * Message type: Heartbeat Response
    */
   MSGTYPE_HEARTBEAT_RESPONSE: 4,
+
+  get CONFIGURED_CODEC() {
+    // FIXME: use config /transport.serialization/
+    return getSerializerTypeByName('')
+  },
+
+  get CONFIGURED_COMPRESSOR() {
+    // FIXME: use config /transport.compressor/
+    return getCompressorByName('')
+  },
 }
