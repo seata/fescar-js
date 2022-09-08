@@ -17,62 +17,104 @@
 
 import { Socket } from 'net'
 import debug from 'debug'
+import { SeataTransport } from './transport'
+import SeataTcpBuffer from './seata-tcp-buffer'
+import { Retry } from '../../seata-common/retry'
+import { SeataHeartBeat } from './seata-tcp-heartbeat'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
 import { ProtocolV1Decoder } from '../v1/protocol-v1-decoder'
 import { ProtocolV1Encoder } from '../v1/protocol-v1-encoder'
-import SeataTcpBuffer from './seata-tcp-buffer'
-import { SeataHeartBeat } from './seata-tcp-heartbeat'
-import { SeataTransport } from './transport'
+import { TransportStatus } from './seata-transport-status'
+
+const log = debug(`seata:rpc:transport`)
 
 type id = number
-
 interface SeataTransportPromise {
   resolve: (value?: any) => void
   reject: (reason?: any) => void
 }
 
-const log = debug(`seata:rpc:transport`)
-
 export class SeataTcpTransport implements SeataTransport {
-  private readonly requestQueue: Map<id, SeataTransportPromise>
-  private readonly transport: Socket
   private readonly host: string
-
-  private heartBeat: SeataHeartBeat
+  private readonly requestQueue: Map<id, SeataTransportPromise>
+  private status: TransportStatus
+  private transport: Socket
+  private heartBeat!: SeataHeartBeat
 
   constructor(hostname: string, port: number) {
     this.host = `${hostname}:${port}`
+    this.status = TransportStatus.PADDING
+    this.transport = new Socket()
     this.requestQueue = new Map()
 
-    // set transport
-    this.transport = new Socket()
-    this.transport.setNoDelay()
-    this.transport
-      .connect(port, hostname, this.handleSocketConnected)
-      .on('error', this.handleSocketErr)
-      .on('close', this.handleSocketClose)
+    Retry.from({
+      initialDelay: 0,
+      maxRetry: 100,
+      period: 100, // 100ms
+      run: async (onSuccess, onFailed) => {
+        try {
+          await this.initTransport(hostname, port)
+          onSuccess()
+        } catch (err) {
+          onFailed()
+        }
+      },
+      onFailedEnd: () => {
+        // TODO emit status
+        this.status = TransportStatus.CLOSED
+      },
+    })
+  }
 
-    // set tcp buffer
-    new SeataTcpBuffer(this.transport).subscribe(this.handleTcpBuffer)
-
-    // set heartbeat
-    this.heartBeat = new SeataHeartBeat(this.transport)
+  getStatus() {
+    return this.status
   }
 
   send(msg: RpcMessage): Promise<void> {
     return new Promise((resolve, reject) => {
       const id = msg.getId()
       this.requestQueue.set(id, { resolve, reject })
-      this.transport.write(ProtocolV1Encoder.encode(msg))
+      this.transport.write(ProtocolV1Encoder.encode(msg), (err) => {
+        log(`write error %s`, err)
+      })
       this.heartBeat.setLastActivityTime(Date.now())
     })
   }
 
-  private handleSocketConnected = () => {
-    log('tcp-transport = connecting => %s', this.host)
+  private initTransport(hostname: string, port: number) {
+    return new Promise((resolve, reject) => {
+      // set transport
+      this.transport.setNoDelay()
+      this.transport
+        .connect(port, hostname, () => {
+          this.handleSocketConnected()
+          resolve(null)
+        })
+        .on('error', (err) => {
+          this.handleSocketErr(err)
+          reject(err)
+        })
+        .on('close', this.handleSocketClose)
+    })
   }
-  private handleSocketErr = () => {}
-  private handleSocketClose = () => {}
+
+  private handleSocketConnected = () => {
+    log('tcp-transport = connected => %s', this.host)
+    this.status = TransportStatus.CONNECTED
+    // stop retry
+    this.heartBeat = new SeataHeartBeat(this.transport)
+    // set tcp buffer
+    new SeataTcpBuffer(this.transport).subscribe(this.handleTcpBuffer)
+  }
+
+  private handleSocketErr = (err: Error) => {
+    log(`connecting => ${this.host} error %s`, err)
+    this.status = TransportStatus.RETRY
+  }
+
+  private handleSocketClose = () => {
+    log(`socket transport close => ${this.host}`)
+  }
 
   private handleTcpBuffer = (data: Buffer) => {
     // decode message

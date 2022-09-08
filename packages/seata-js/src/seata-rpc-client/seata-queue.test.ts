@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
+import { SeataQueue } from './seata-queue'
 import config from '../seata-config/config'
 import { RpcMessage } from '../seata-protocol/rpc-message'
-import { SeataQueue } from './seata-queue'
 
 describe('seata queue test suites', () => {
   // set max req timeout

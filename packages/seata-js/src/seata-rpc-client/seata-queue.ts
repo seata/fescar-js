@@ -21,15 +21,15 @@ import config from '../seata-config/config'
 import { RpcMessage } from '../seata-protocol/rpc-message'
 import { SeataContext } from './seata-context'
 
+// init log
+const log = debug('seata:rpc:seata-queue')
+
 export type SeataQueueId = number
 export type SeataRpcResponse = {
   err: Error | null
   res: any
 }
 export type SeataQueueSubscribe = (id: SeataQueueId, msg: SeataContext) => void
-
-// init log
-const log = debug('seata:rpc:seata-queue')
 
 /**
  * seata-rpc-queue

@@ -15,7 +15,4 @@
  * limitations under the License.
  */
 
-
-export class ConfigurationCache {
-
-}
+export class ConfigurationCache {}
