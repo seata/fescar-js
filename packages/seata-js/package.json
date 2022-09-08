@@ -5,7 +5,8 @@
   "types": "./lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
+    "debug": "^3.1.0",
     "hessian.js": "^2.10.1",
-    "debug": "^3.1.0"
+    "nacos": "^2.5.0"
   }
 }

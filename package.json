@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "seata-js",
+  "name": "@seata-js/monorepo",
   "version": "1.0.0",
   "license": "Apache license 2.0",
   "repository": "git@github.com:seata/seata-js.git",
