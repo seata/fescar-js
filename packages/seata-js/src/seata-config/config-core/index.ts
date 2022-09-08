@@ -37,8 +37,7 @@ export class ConfigurationFactory {
 
   static instance = null
 
-  private static load() {
-  }
+  private static load() {}
 
   /**
    * Gets instance.

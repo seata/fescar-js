@@ -15,35 +15,6 @@
  * limitations under the License.
  */
 
-/**
- * The type Abstract configuration.
- *
- * @author godkun
- */
-export class AbstractConfiguration {
-  /**
-   * The constant DEFAULT_CONFIG_TIMEOUT.
-   */
-  protected static DEFAULT_CONFIG_TIMEOUT = 5 * 1000
-
-  /**
-   * The constant DEFAULT_XXX.
-   */
-  static DEFAULT_SHORT = 0
-
-  static DEFAULT_INT = 0
-
-  static DEFAULT_LONG = '0L'
-
-  static DEFAULT_BOOLEAN = false
-
-  /**
-   * Gets config.
-   *
-   * @param dataId       the data id
-   * @param defaultValue the default value
-   */
-  getConfig(dataId: string, defaultValue: string) {
-    return ''
-  }
-}
+describe('restry test suite', () => {
+  it('test init retry', () => {})
+})

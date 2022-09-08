@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 
-import { Socket } from 'net'
-import { EventEmitter } from 'events'
-
+import { Socket } from 'node:net'
+import { EventEmitter } from 'node:events'
 import SeataTcpBuffer from './seata-tcp-buffer'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
 import { MessageType } from '../../seata-protocol/message-type'

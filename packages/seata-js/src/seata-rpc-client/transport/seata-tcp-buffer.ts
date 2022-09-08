@@ -15,19 +15,18 @@
  * limitations under the License.
  */
 
-import { Socket } from 'net'
+import { Socket } from 'node:net'
 import { Buffer } from 'node:buffer'
 import debug from 'debug'
-
 import { noop } from '../../seata-common/util'
 import ByteBuffer from '../../seata-common/byte-buffer'
 import prot from '../../seata-protocol/protocol-constants'
 
+const log = debug('seata:tcp-buffer')
+
 export interface SeataTcpBufferSubscriber {
   (data: Buffer): void
 }
-
-const log = debug('seata:tcp-buffer')
 
 /**
  * 在并发的tcp数据传输中，会出现少包，粘包的现象

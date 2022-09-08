@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
+import { Socket } from 'net'
 import { genNextId } from '../seata-id'
 import prot from '../../seata-protocol/protocol-constants'
 import { RpcMessage } from '../../seata-protocol/rpc-message'
-import { Socket } from 'net'
-import { HeartbeatMessage } from '../../seata-protocol/heartbeat-message'
 import { ProtocolV1Encoder } from '../v1/protocol-v1-encoder'
+import { HeartbeatMessage } from '../../seata-protocol/heartbeat-message'
 
-export default class AbstractSeataRemoting {
+export default abstract class AbstractSeataRemoting {
   protected transport: Socket
 
   constructor(transport: Socket) {
@@ -30,13 +30,12 @@ export default class AbstractSeataRemoting {
   }
 
   protected buildRequestMessage(msg: Object, messageType: number) {
-    const rpcMessage = new RpcMessage()
-    rpcMessage.setId(genNextId())
-    rpcMessage.setMessageType(messageType)
-    rpcMessage.setCodec(prot.CONFIGURED_CODEC)
-    rpcMessage.setCompressor(prot.CONFIGURED_COMPRESSOR)
-    rpcMessage.setBody(msg)
-    return rpcMessage
+    return new RpcMessage()
+      .setId(genNextId())
+      .setMessageType(messageType)
+      .setCodec(prot.CONFIGURED_CODEC)
+      .setCompressor(prot.CONFIGURED_COMPRESSOR)
+      .setBody(msg)
   }
 
   protected buildResponseMessage(
@@ -44,19 +43,19 @@ export default class AbstractSeataRemoting {
     msg: Object,
     messageType: number,
   ) {
-    const rpcMsg = new RpcMessage()
-    rpcMsg.setMessageType(messageType)
-    rpcMsg.setCodec(rpcMessage.getCodec()) // same with request
-    rpcMsg.setCompressor(rpcMessage.getCompressor())
-    rpcMsg.setBody(msg)
-    rpcMsg.setId(rpcMessage.getId())
-    return rpcMsg
+    return new RpcMessage()
+      .setMessageType(messageType)
+      .setCodec(rpcMessage.getCodec()) // same with request
+      .setCompressor(rpcMessage.getCompressor())
+      .setBody(msg)
+      .setId(rpcMessage.getId())
   }
 
   protected send(msg: Object) {
     if (!this.transport) {
       return
     }
+
     const rpcMessage = this.buildRequestMessage(
       msg,
       msg instanceof HeartbeatMessage

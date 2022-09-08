@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-import { RegistryService, RegistryType } from "../../discovery"
+import { RegistryService, RegistryType } from '../../discovery'
 
 import { NacosRegistryProvider } from '../../discovery-nacos/nacos-registry-provider'
 
@@ -37,6 +37,6 @@ export default class RegistryFactory {
   private static buildRegistryService(): RegistryService {
     let registryType: RegistryType
     registryType = RegistryType.Nacos
-    return (new NacosRegistryProvider).provide()
+    return new NacosRegistryProvider().provide()
   }
 }

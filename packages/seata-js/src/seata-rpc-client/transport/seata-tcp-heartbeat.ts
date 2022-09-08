@@ -16,9 +16,11 @@
  */
 
 import { Socket } from 'net'
+import debug from 'debug'
 import { HeartbeatMessage } from '../../seata-protocol/heartbeat-message'
 import AbstractSeataRemoting from './seata-abstract-remoting'
 
+const log = debug('seata:heartbeat~')
 // reference: NettyBasicConfig.java
 const DEFAULT_WRITE_IDLE_SECONDS = 5_000
 
@@ -60,8 +62,9 @@ export class SeataHeartBeat extends AbstractSeataRemoting {
   /**
    * receive heartbeat response message
    */
-  async receive(): Promise<void> {
+  receive() {
     this.lastActivityTime = Date.now()
+    log(`receive heartbeat pong`)
   }
 
   destroy() {

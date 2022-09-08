@@ -44,7 +44,6 @@ export class NacosRegistryService implements RegistryService {
 
   private static instance: NacosRegistryService
 
-
   static getInstance(): NacosRegistryService {
     if (!NacosRegistryService.instance) {
       NacosRegistryService.instance = new NacosRegistryService()
@@ -67,7 +66,7 @@ export class NacosRegistryService implements RegistryService {
   unsubscribe(cluster: string, listener) {
     // TODO:
   }
-  
+
   lookup(key: string): Array<string> {
     return ['1']
   }

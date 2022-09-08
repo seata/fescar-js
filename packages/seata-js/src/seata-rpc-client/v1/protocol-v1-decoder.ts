@@ -24,6 +24,8 @@ import { HeartbeatMessage } from '../../seata-protocol/heartbeat-message'
 import { CompressorFactory } from '../../seata-compressor'
 import SerializerFactory from '../../seata-serializer'
 
+const log = debug(`prot:v1:decoder`)
+
 /**
  * <pre>
  * 0     1     2     3     4     5     6     7     8     9    10     11    12    13    14    15    16
@@ -47,8 +49,6 @@ import SerializerFactory from '../../seata-serializer'
  * </p>
  * https://github.com/seata/seata/issues/893
  */
-
-const log = debug(`prot:v1:decoder`)
 
 export class ProtocolV1Decoder {
   static decode(buffer: Buffer) {

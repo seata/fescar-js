@@ -50,7 +50,7 @@ def fixed_license_file(file):
     with open(file, 'r+') as f:
         raw = f.read()
         f.seek(0)
-        f.write(LICENSE + '\n' + raw)
+        f.write(f"{LICENSE}\n\n{raw}")
 
 
 if __name__ == '__main__':

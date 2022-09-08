@@ -20,7 +20,7 @@ import { NacosRegistryService } from './nacos-registry-service'
 
 /**
  * the nacos registry provider
- * 
+ *
  * @author godkun
  */
 export class NacosRegistryProvider implements RegistryProvider {

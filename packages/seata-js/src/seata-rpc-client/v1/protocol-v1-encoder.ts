@@ -23,6 +23,8 @@ import SerializerFactory from '../../seata-serializer'
 import { CompressorFactory } from '../../seata-compressor'
 import { HeadMapSerializer } from './headmap-serializer'
 
+const log = debug(`seata:prot:v1:encoder`)
+
 /**
  * <pre>
  * 0     1     2     3     4     5     6     7     8     9    10     11    12    13    14    15    16
@@ -46,8 +48,6 @@ import { HeadMapSerializer } from './headmap-serializer'
  * </p>
  * https://github.com/seata/seata/issues/893
  */
-
-const log = debug(`seata:prot:v1:encoder`)
 
 export class ProtocolV1Encoder {
   static encode(msg: RpcMessage) {

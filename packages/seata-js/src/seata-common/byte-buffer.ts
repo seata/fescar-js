@@ -17,11 +17,12 @@
 
 import { Buffer } from 'node:buffer'
 
+const DEFAULT_ALLOC_SIZE = 1024
+
 export interface ByteBufferProp {
   buffer?: Buffer
   defaultAllocSize?: number
 }
-
 export interface ReadWriteProp {
   /**
    * set read or write index
@@ -43,8 +44,6 @@ export interface ReadWriteProp {
    */
   len?: number
 }
-
-const DEFAULT_ALLOC_SIZE = 1024
 
 /**
  * BufferBuffer is a buffer wrapper class

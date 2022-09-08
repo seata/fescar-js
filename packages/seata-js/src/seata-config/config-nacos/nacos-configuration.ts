@@ -19,7 +19,7 @@ import { AbstractConfiguration } from '../config-core/abstract-configuration'
 
 /**
  * the type Nacos configuration
- * 
+ *
  * @author godkun
  */
 export class NacosConfiguration extends AbstractConfiguration {
